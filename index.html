@@ -6,355 +6,401 @@
 <title>Медиамагнаты и политический авторитет — обзор исследования</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap&subset=cyrillic,cyrillic-ext,latin" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap&subset=cyrillic,cyrillic-ext,latin" rel="stylesheet">
 <style>
+/* ============================================================
+   ВЕБ-БРУТАЛИЗМ · палитра: белый / угольный #333 / синий #004F9F
+   Шрифт: только IBM Plex Mono
+   ============================================================ */
 :root{
-  --bg:#14110f;
-  --bg2:#1b1714;
-  --bg3:#221d18;
-  --ink:#ece3d6;
-  --paper:#f4ecdf;
-  --muted:#9d9389;
-  --faint:#6f665d;
-  --accent:#d6452f;
-  --accent2:#e8714f;
-  --gold:#c9a24b;
-  --line:rgba(236,227,214,.12);
-  --line2:rgba(236,227,214,.22);
+  --bg:#FFFFFF;
+  --bg2:#FFFFFF;
+  --bg3:#FFFFFF;
+  --ink:#333333;
+  --paper:#333333;
+  --muted:#333333;
+  --faint:#333333;
+  --accent:#333333;   /* X · персоналистская */
+  --accent2:#333333;
+  --gold:#004F9F;      /* Meta · институциональная */
+  --line:#333333;
+  --line2:#333333;
+  --shadow:8px 8px 0 #333333;
+  --shadow-blue:8px 8px 0 #004F9F;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
   background:var(--bg);
   color:var(--ink);
-  font-family:'Manrope',sans-serif;
+  font-family:'IBM Plex Mono',monospace;
   font-weight:400;
-  line-height:1.6;
+  line-height:1.5;
   overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
 }
+/* видимая сетка-миллиметровка как у технического чертежа */
 body::before{
-  content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(51,51,51,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(51,51,51,.05) 1px,transparent 1px);
+  background-size:32px 32px;
 }
-::selection{background:var(--accent);color:#fff}
+::selection{background:#333;color:#fff}
 .mono{font-family:'IBM Plex Mono',monospace}
-.serif{font-family:'Playfair Display',serif}
+.serif{font-family:'IBM Plex Mono',monospace}
+img{image-rendering:auto}
 
-.wrap{max-width:1180px;margin:0 auto;padding:0 28px;position:relative;z-index:2}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+
+/* ---------- РЕЗКИЕ ПОЯВЛЕНИЯ / ГЛИТЧ ---------- */
+.reveal{opacity:0}
+.reveal.in{animation:glitch-in .42s steps(2,end) forwards}
+@keyframes glitch-in{
+  0%  {opacity:0;transform:translate(-10px,0);clip-path:inset(0 70% 0 0)}
+  30% {opacity:1;transform:translate(8px,0); clip-path:inset(0 0 55% 0)}
+  55% {opacity:1;transform:translate(-5px,0);clip-path:inset(35% 0 0 0)}
+  80% {opacity:1;transform:translate(3px,0); clip-path:inset(0 25% 0 0)}
+  100%{opacity:1;transform:none;            clip-path:inset(0 0 0 0)}
+}
+
+/* ---------- БЕГУЩАЯ СТРОКА ---------- */
+.marquee{
+  border-top:3px solid #333;border-bottom:3px solid #333;
+  background:#333;color:#fff;overflow:hidden;white-space:nowrap;
+  font-weight:600;text-transform:uppercase;letter-spacing:.18em;font-size:13px;
+}
+.marquee.blue{background:#004F9F}
+.marquee .track{display:inline-block;padding:11px 0;animation:marq 22s linear infinite;will-change:transform}
+.marquee.rev .track{animation-direction:reverse}
+.marquee span{padding:0 26px}
+.marquee span::after{content:"■";margin-left:26px;font-size:9px;vertical-align:middle}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* ============ HERO ============ */
 .hero{
-  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
-  position:relative;border-bottom:1px solid var(--line);
-  background:
-    radial-gradient(900px 600px at 78% 18%,rgba(214,69,47,.16),transparent 60%),
-    radial-gradient(700px 500px at 12% 88%,rgba(201,162,75,.10),transparent 60%);
+  min-height:96vh;display:flex;flex-direction:column;justify-content:center;
+  position:relative;border-bottom:3px solid #333;padding:40px 0;
 }
 .hero-grid{
-  position:absolute;inset:0;z-index:0;opacity:.5;
-  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
-  background-size:64px 64px;
-  mask-image:radial-gradient(ellipse 90% 80% at 50% 45%,#000 30%,transparent 80%);
+  position:absolute;inset:0;z-index:0;opacity:1;
+  background-image:linear-gradient(#333 1px,transparent 1px),linear-gradient(90deg,#333 1px,transparent 1px);
+  background-size:120px 120px;opacity:.07;
 }
 .kicker{
-  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.32em;
-  text-transform:uppercase;color:var(--accent2);margin-bottom:30px;
-  display:flex;align-items:center;gap:14px;
+  font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:#fff;
+  background:#333;display:inline-flex;align-items:center;gap:12px;
+  padding:9px 16px;margin-bottom:34px;font-weight:600;align-self:flex-start;
+  border:3px solid #333;
 }
-.kicker::before{content:"";width:42px;height:1px;background:var(--accent)}
+.kicker::before{content:"▶";font-size:10px}
 .hero h1{
-  font-family:'Playfair Display',serif;font-weight:900;
-  font-size:clamp(2.6rem,6.4vw,5.4rem);line-height:1.02;
-  letter-spacing:-.01em;color:var(--paper);max-width:16ch;
+  font-family:'IBM Plex Mono',monospace;font-weight:700;
+  font-size:clamp(3rem,11vw,9rem);line-height:.92;
+  letter-spacing:-.04em;text-transform:uppercase;color:#333;
+  max-width:18ch;margin-left:-.04em;
 }
-.hero h1 em{font-style:italic;color:var(--gold)}
+.hero h1 em{font-style:normal;background:#004F9F;color:#fff;padding:0 .12em;
+  box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .hero-sub{
-  margin-top:30px;max-width:60ch;font-size:clamp(1rem,1.6vw,1.22rem);
-  color:var(--muted);font-weight:300;
+  margin-top:32px;max-width:62ch;font-size:clamp(.95rem,1.4vw,1.12rem);
+  color:#333;font-weight:400;border-left:6px solid #333;padding-left:18px;
 }
 .hero-meta{
-  margin-top:46px;display:flex;flex-wrap:wrap;gap:14px 32px;
-  font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--faint);
-  letter-spacing:.04em;
+  margin-top:40px;display:flex;flex-wrap:wrap;gap:0;
+  font-size:12.5px;color:#333;letter-spacing:.04em;border:3px solid #333;width:fit-content;
 }
-.hero-meta b{color:var(--ink);font-weight:500}
+.hero-meta span{padding:12px 18px;border-right:3px solid #333;text-transform:uppercase}
+.hero-meta span:last-child{border-right:none}
+.hero-meta b{font-weight:700}
 .scrolldown{
-  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
-  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.25em;
-  color:var(--faint);text-transform:uppercase;text-align:center;
+  position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+  font-size:11px;letter-spacing:.24em;color:#333;text-transform:uppercase;text-align:center;
 }
-.scrolldown span{display:block;font-size:18px;margin-top:6px;animation:bob 2s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+.scrolldown span{display:block;font-size:20px;margin-top:4px;animation:bob 1s steps(2) infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
 
-/* ============ FACTS STRIP ============ */
-.facts{
-  border-bottom:1px solid var(--line);background:var(--bg2);
-}
+/* ============ FACTS ============ */
+.facts{border-bottom:3px solid #333;background:#fff}
 .facts-inner{display:grid;grid-template-columns:repeat(6,1fr)}
-.fact{padding:38px 22px;border-right:1px solid var(--line);text-align:center}
+.fact{padding:34px 18px;border-right:3px solid #333;text-align:center;transition:none}
 .fact:last-child{border-right:none}
+.fact:hover{background:#333;color:#fff}
+.fact:hover .n{color:#fff}
+.fact:hover .l{color:#fff}
 .fact .n{
-  font-family:'Playfair Display',serif;font-weight:700;
-  font-size:clamp(1.9rem,3.2vw,2.7rem);color:var(--gold);line-height:1;
+  font-family:'IBM Plex Mono',monospace;font-weight:700;
+  font-size:clamp(2.4rem,5vw,4.4rem);color:#333;line-height:.9;letter-spacing:-.04em;
 }
-.fact .l{margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fact .l{margin-top:12px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#333;font-weight:500}
 
-/* ============ SECTION SCAFFOLD ============ */
-section{padding:108px 0;border-bottom:1px solid var(--line);position:relative}
+/* ============ SECTION ============ */
+section{padding:96px 0;border-bottom:3px solid #333;position:relative}
 .sec-tag{
-  font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.28em;
-  text-transform:uppercase;color:var(--accent2);margin-bottom:22px;
-  display:flex;align-items:center;gap:13px;
+  font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#fff;background:#333;
+  display:inline-flex;align-items:center;gap:11px;padding:8px 14px;margin-bottom:26px;font-weight:600;
 }
-.sec-tag::before{content:"";width:30px;height:1px;background:var(--accent)}
+.sec-tag::before{content:"//"}
 h2{
-  font-family:'Playfair Display',serif;font-weight:700;
-  font-size:clamp(1.9rem,4vw,3.1rem);line-height:1.08;color:var(--paper);
-  letter-spacing:-.01em;max-width:20ch;
+  font-family:'IBM Plex Mono',monospace;font-weight:700;
+  font-size:clamp(2rem,5.4vw,4.2rem);line-height:.96;color:#333;
+  letter-spacing:-.035em;max-width:22ch;text-transform:uppercase;
 }
-.lead{margin-top:24px;max-width:64ch;color:var(--muted);font-size:1.08rem;font-weight:300}
+.lead{margin-top:26px;max-width:68ch;color:#333;font-size:1rem;font-weight:400;
+  border-left:6px solid #333;padding-left:18px}
 
-/* reveal */
-.reveal{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
-.reveal.in{opacity:1;transform:none}
-
-/* ============ FLOW DIAGRAM ============ */
-.flow{margin-top:56px}
+/* ============ FLOW ============ */
+.flow{margin-top:48px;border:3px solid #333;padding:22px;box-shadow:var(--shadow);background:#fff}
 .flow svg{width:100%;height:auto;display:block}
 
+/* ============ MODEL KEY (X / META) ============ */
+.keysplit{margin-top:44px;display:grid;grid-template-columns:1fr 1fr;gap:0;border:3px solid #333}
+.keyside{padding:26px 26px;display:flex;flex-direction:column;gap:7px;transition:none}
+.keyside.x{background:#333;color:#fff;border-right:3px solid #333}            /* X — инверсия */
+.keyside.meta{background:#fff;color:#333}                                      /* Meta — синий */
+.keyside.meta{border-left:8px solid #004F9F}
+.keyside .kp{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600}
+.keyside.x .kp{color:#fff}
+.keyside.meta .kp{color:#004F9F}
+.keyside .kh{font-weight:700;font-size:1.3rem;text-transform:uppercase;letter-spacing:-.02em}
+.keyside .kd{font-weight:400;font-size:.9rem;line-height:1.5}
+.keyside.x:hover{background:#004F9F}
+.keyside.meta:hover{background:#004F9F;color:#fff}
+.keyside.meta:hover .kp{color:#fff}
+
 /* ============ MODELS ============ */
-.models{margin-top:58px;display:grid;grid-template-columns:1fr 1fr;gap:30px}
-.model{
-  border:1px solid var(--line2);border-radius:4px;overflow:hidden;
-  background:linear-gradient(180deg,var(--bg2),var(--bg));
-  display:flex;flex-direction:column;
-}
-.model .photo{position:relative;height:300px;overflow:hidden;filter:grayscale(.35) contrast(1.05)}
-.model .photo img{width:100%;height:100%;object-fit:cover;object-position:center 22%;
-  transition:transform 1.1s cubic-bezier(.16,1,.3,1)}
-.model:hover .photo img{transform:scale(1.05)}
-.model .photo::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,transparent 40%,var(--bg2) 99%)}
+.models{margin-top:52px;display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.model{border:3px solid #333;overflow:hidden;background:#fff;display:flex;flex-direction:column;
+  box-shadow:var(--shadow);transition:transform .12s steps(2),box-shadow .12s steps(2)}
+.model:hover{transform:translate(-4px,-4px);box-shadow:12px 12px 0 #333}
+.model .photo{position:relative;height:300px;overflow:hidden;filter:grayscale(1) contrast(1.15);
+  border-bottom:3px solid #333}
+.model .photo img{width:100%;height:100%;object-fit:cover;object-position:center 22%}
+.model.m1 .photo{filter:grayscale(1) contrast(1.15) invert(.06)}
 .model .badge{
-  position:absolute;top:18px;left:18px;z-index:2;
-  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;
-  padding:7px 12px;border-radius:3px;text-transform:uppercase;
+  position:absolute;top:0;left:0;z-index:2;font-size:11px;letter-spacing:.1em;
+  padding:9px 14px;text-transform:uppercase;font-weight:600;border-right:3px solid #333;border-bottom:3px solid #333;
 }
-.m1 .badge{background:var(--accent);color:#fff}
-.m2 .badge{background:var(--gold);color:#1a160f}
-.model .body{padding:28px 30px 34px;flex:1;display:flex;flex-direction:column}
-.model h3{font-family:'Playfair Display',serif;font-weight:700;font-size:1.55rem;color:var(--paper);line-height:1.15}
-.model .who{margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--faint);letter-spacing:.05em}
-.model p{margin-top:18px;color:var(--muted);font-size:.97rem;font-weight:300;line-height:1.65}
-.model ul{margin-top:20px;list-style:none;display:flex;flex-direction:column;gap:11px}
-.model li{display:flex;gap:11px;font-size:.92rem;color:var(--ink)}
-.model li::before{content:"›";color:var(--accent2);font-weight:700;flex:none}
-.m2 li::before{color:var(--gold)}
+.m1 .badge{background:#333;color:#fff}        /* X */
+.m2 .badge{background:#004F9F;color:#fff}     /* Meta */
+.model .body{padding:26px 28px 30px;flex:1;display:flex;flex-direction:column}
+.m1 .body{background:#333;color:#fff}          /* X — инверсия */
+.model h3{font-weight:700;font-size:1.45rem;line-height:1.05;text-transform:uppercase;letter-spacing:-.02em}
+.m2 h3{color:#004F9F}
+.model .who{margin-top:8px;font-size:12px;letter-spacing:.05em;text-transform:uppercase}
+.m1 .who{color:#fff}
+.m2 .who{color:#333}
+.model p{margin-top:16px;font-size:.93rem;font-weight:400;line-height:1.55}
+.model ul{margin-top:18px;list-style:none;display:flex;flex-direction:column;gap:10px}
+.model li{display:flex;gap:11px;font-size:.9rem}
+.model li::before{content:"►";font-weight:700;flex:none;font-size:10px;margin-top:3px}
+.m2 li::before{color:#004F9F}
 
 /* ============ MATRIX ============ */
-.matrix{margin-top:54px;border:1px solid var(--line2);border-radius:4px;overflow:hidden}
-.matrix table{width:100%;border-collapse:collapse;font-size:.92rem}
+.matrix{margin-top:48px;border:3px solid #333;overflow:hidden;box-shadow:var(--shadow);background:#fff}
+.matrix table{width:100%;border-collapse:collapse;font-size:.9rem}
 .matrix th{
-  text-align:left;padding:18px 20px;background:var(--bg3);
-  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;
-  text-transform:uppercase;font-weight:500;border-bottom:1px solid var(--line2);
+  text-align:left;padding:16px 18px;background:#fff;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:700;border-bottom:3px solid #333;border-right:3px solid #333;
 }
-.matrix th.dim{color:var(--muted)}
-.matrix th.x{color:var(--accent2)}
-.matrix th.m{color:var(--gold)}
-.matrix td{padding:18px 20px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--muted);font-weight:300;line-height:1.55}
+.matrix th:last-child{border-right:none}
+.matrix th.dim{color:#333}
+.matrix th.x{background:#333;color:#fff}        /* X — инверсия */
+.matrix th.m{background:#004F9F;color:#fff}     /* Meta — синий */
+.matrix td{padding:16px 18px;border-bottom:1px solid #333;border-right:3px solid #333;
+  vertical-align:top;color:#333;font-weight:400;line-height:1.5}
+.matrix td:last-child{border-right:none}
 .matrix tr:last-child td{border-bottom:none}
-.matrix tr:hover td{background:rgba(236,227,214,.025)}
-.matrix .dimcell{color:var(--ink);font-weight:600;font-family:'Manrope';width:24%}
-.matrix .num{font-family:'IBM Plex Mono',monospace;color:var(--faint);font-size:11px;margin-right:9px}
-
-/* ============ TIMELINE ============ */
-.timeline{margin-top:60px;position:relative;padding-left:4px}
-.tl-line{position:absolute;left:0;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,var(--accent),var(--gold))}
-.tl-item{position:relative;padding:0 0 42px 42px}
-.tl-item:last-child{padding-bottom:0}
-.tl-dot{position:absolute;left:-7px;top:4px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:2px solid var(--accent2)}
-.tl-item.gold .tl-dot{border-color:var(--gold)}
-.tl-date{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:var(--accent2)}
-.tl-item.gold .tl-date{color:var(--gold)}
-.tl-h{font-family:'Playfair Display',serif;font-weight:700;font-size:1.25rem;color:var(--paper);margin-top:5px}
-.tl-p{margin-top:8px;color:var(--muted);font-size:.95rem;font-weight:300;max-width:58ch}
-.tl-tag{display:inline-block;margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:10px;
-  letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border:1px solid var(--line2);border-radius:3px;color:var(--faint)}
+.matrix tr:hover td{background:#333;color:#fff}
+.matrix tr:hover .num{color:#fff}
+.matrix .dimcell{color:#333;font-weight:700;width:24%;text-transform:uppercase;font-size:.84rem}
+.matrix .num{font-weight:700;color:#333;font-size:11px;margin-right:9px}
 
 /* ============ STATS / CHARTS ============ */
-.charts{margin-top:54px;display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+.charts{margin-top:48px;display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
 .card{
-  border:1px solid var(--line2);border-radius:5px;padding:28px 30px 30px;
-  background:linear-gradient(180deg,var(--bg2),var(--bg));position:relative;overflow:hidden;
+  border:3px solid #333;padding:24px 26px 26px;background:#fff;position:relative;
+  display:flex;flex-direction:column;box-shadow:var(--shadow);
+  transition:transform .12s steps(2),box-shadow .12s steps(2),border-color .1s steps(1);
 }
+.card:hover{transform:translate(-5px,-5px);box-shadow:12px 12px 0 #004F9F;border-color:#004F9F}
 .card.span2{grid-column:span 2}
-.card .ct{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--accent2);display:flex;align-items:center;gap:10px}
-.card .ct::before{content:"";width:18px;height:1px;background:var(--accent)}
-.card h3{font-family:'Playfair Display',serif;font-weight:700;font-size:1.32rem;color:var(--paper);
-  margin-top:12px;line-height:1.18}
-.card .src{margin-top:auto;padding-top:16px;font-family:'IBM Plex Mono',monospace;font-size:10px;
-  letter-spacing:.06em;color:var(--faint);border-top:1px solid var(--line);margin-top:20px}
-.card svg{width:100%;height:auto;display:block;margin-top:18px;overflow:visible}
-.card .note{margin-top:14px;color:var(--muted);font-size:.9rem;font-weight:300;line-height:1.5}
+.card .ct{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:#333;
+  display:inline-flex;align-self:flex-start;align-items:center;gap:9px;padding:6px 11px;font-weight:600}
+.card h3{font-weight:700;font-size:1.18rem;margin-top:14px;line-height:1.12;text-transform:uppercase;letter-spacing:-.02em}
+.card .src{margin-top:auto;padding-top:14px;font-size:10px;letter-spacing:.04em;color:#333;
+  border-top:3px solid #333;margin-top:18px;text-transform:uppercase}
+.card svg{width:100%;height:auto;display:block;margin-top:16px;overflow:visible;
+  border:2px solid #333;background:#fff;padding:10px}
+.card .note{margin-top:14px;color:#333;font-size:.88rem;font-weight:400;line-height:1.45}
 
-/* big number tiles */
-.bignum{display:flex;flex-direction:column;justify-content:center}
-.bignum .huge{font-family:'Playfair Display',serif;font-weight:900;
-  font-size:clamp(3rem,8vw,5.2rem);line-height:.9;color:var(--gold);letter-spacing:-.02em}
-.bignum .huge small{font-size:.42em;color:var(--muted);font-weight:700;margin-left:6px}
-.bignum .cap{margin-top:14px;color:var(--ink);font-size:1rem;font-weight:300;max-width:36ch;line-height:1.5}
+/* большие числа */
+.bignum{justify-content:center}
+.bignum .huge{font-weight:700;font-size:clamp(3.4rem,9vw,6rem);line-height:.85;color:#004F9F;letter-spacing:-.05em}
+.bignum .huge small{font-size:.36em;color:#333;font-weight:700;margin-left:6px}
+.bignum .cap{margin-top:16px;color:#333;font-size:.96rem;font-weight:400;max-width:40ch;line-height:1.45}
 
-/* dot grid */
-.dotgrid{display:grid;grid-template-columns:repeat(20,1fr);gap:5px;margin-top:20px}
-.dotgrid i{aspect-ratio:1;border-radius:50%;background:rgba(236,227,214,.10)}
-.dotgrid i.on{background:var(--accent)}
+/* точечная сетка */
+.dotgrid{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;margin-top:18px;border:2px solid #333;padding:8px;background:#fff}
+.dotgrid i{aspect-ratio:1;background:#fff;border:1px solid #333}
+.dotgrid i.on{background:#333}
 
-/* ratio bars */
+/* полосы-отношения */
 .ratiorow{margin-top:18px}
-.ratiorow .rl{display:flex;justify-content:space-between;font-size:.86rem;color:var(--muted);margin-bottom:6px}
-.ratiorow .rl b{color:var(--ink);font-family:'IBM Plex Mono',monospace}
-.rbar{height:14px;border-radius:7px;background:rgba(236,227,214,.08);overflow:hidden}
-.rbar span{display:block;height:100%;border-radius:7px}
-
-/* ============ TIMELINE (curve) ============ */
-.curvewrap{margin-top:54px;border:1px solid var(--line2);border-radius:5px;
-  background:linear-gradient(180deg,var(--bg2),var(--bg));padding:34px 30px 26px}
-.curvewrap svg{width:100%;height:auto;display:block;overflow:visible}
-.legend{display:flex;gap:26px;flex-wrap:wrap;margin-top:6px;
-  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--muted)}
-.legend i{display:inline-block;width:22px;height:8px;border-radius:4px;margin-right:8px;vertical-align:1px}
-.tl-cards{margin-top:24px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.tlc{border:1px solid var(--line);border-radius:4px;padding:16px 16px 18px;background:var(--bg2);
-  border-top-width:3px}
-.tlc.x{border-top-color:var(--accent)}
-.tlc.meta{border-top-color:var(--gold)}
-.tlc .d{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.05em}
-.tlc .t{margin-top:7px;font-family:'Playfair Display',serif;font-weight:700;font-size:1.02rem;color:var(--paper);line-height:1.2}
-.tlc .pl{margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--muted)}
-
-/* ============ HYPOTHESES ============ */
-.hyps{margin-top:54px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.hyp{
-  border:1px solid var(--line2);border-radius:4px;padding:26px 28px;background:var(--bg2);
-  position:relative;overflow:hidden;
-}
-.hyp::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold)}
-.hyp.main::before{background:var(--accent)}
-.hyp .code{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--faint)}
-.hyp h4{margin-top:10px;font-family:'Playfair Display',serif;font-weight:500;font-size:1.12rem;color:var(--paper);line-height:1.3}
-.hyp .status{margin-top:18px;display:inline-flex;align-items:center;gap:8px;
-  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--gold)}
-.hyp .status .tick{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--gold);
-  display:grid;place-items:center;font-size:10px}
-.hyp.utoch .status{color:var(--accent2)}
-
-/* ============ THEORY ============ */
-.theory{margin-top:52px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.th{border:1px solid var(--line);border-radius:4px;padding:24px;background:var(--bg2);transition:border-color .4s,transform .4s}
-.th:hover{border-color:var(--accent);transform:translateY(-4px)}
-.th .name{font-family:'Playfair Display',serif;font-weight:700;font-size:1.2rem;color:var(--paper)}
-.th .role{margin-top:4px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2)}
-.th p{margin-top:13px;font-size:.9rem;color:var(--muted);font-weight:300;line-height:1.55}
-
-/* ============ PULLQUOTE ============ */
-.pull{padding:120px 0;background:
-  radial-gradient(800px 500px at 80% 30%,rgba(214,69,47,.12),transparent 60%);}
-.pull blockquote{
-  font-family:'Playfair Display',serif;font-style:italic;font-weight:500;
-  font-size:clamp(1.5rem,3.4vw,2.6rem);line-height:1.3;color:var(--paper);
-  max-width:24ch;margin:0 auto;text-align:center;position:relative;
-}
-.pull blockquote::before{content:"«";color:var(--accent);font-size:1.4em;line-height:0;vertical-align:-.3em}
-.pull blockquote::after{content:"»";color:var(--accent);font-size:1.4em;line-height:0;vertical-align:-.3em}
-
-/* ============ CONCLUSION ============ */
-.concl-grid{margin-top:54px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.cbox{border-top:2px solid var(--accent);padding-top:22px}
-.cbox:nth-child(2){border-top-color:var(--gold)}
-.cbox h4{font-family:'Playfair Display',serif;font-weight:700;font-size:1.3rem;color:var(--paper)}
-.cbox p{margin-top:13px;color:var(--muted);font-weight:300;font-size:.98rem;line-height:1.65}
-
-/* ============ FOOTER ============ */
-footer{padding:64px 0 80px;text-align:center}
-footer .ft-title{font-family:'Playfair Display',serif;font-style:italic;font-size:1.4rem;color:var(--muted)}
-footer .ft-meta{margin-top:22px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--faint);letter-spacing:.05em;line-height:2}
-footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
-
-/* ============ MODEL KEY (разделение X / Meta) ============ */
-.keysplit{margin-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:0;
-  border:1px solid var(--line2);border-radius:5px;overflow:hidden}
-.keyside{padding:24px 26px;display:flex;flex-direction:column;gap:6px}
-.keyside.x{border-left:4px solid var(--accent);background:linear-gradient(180deg,rgba(214,69,47,.07),transparent)}
-.keyside.meta{border-left:4px solid var(--gold);background:linear-gradient(180deg,rgba(201,162,75,.07),transparent)}
-.keyside .kp{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
-.keyside.x .kp{color:var(--accent2)}
-.keyside.meta .kp{color:var(--gold)}
-.keyside .kh{font-family:'Playfair Display',serif;font-weight:700;font-size:1.2rem;color:var(--paper);margin-top:2px}
-.keyside .kd{color:var(--muted);font-weight:300;font-size:.92rem;line-height:1.55;margin-top:4px}
+.ratiorow .rl{display:flex;justify-content:space-between;font-size:.84rem;color:#333;margin-bottom:6px;text-transform:uppercase}
+.ratiorow .rl b{color:#333;font-weight:700}
+.rbar{height:22px;background:#fff;border:3px solid #333;overflow:hidden}
+.rbar span{display:block;height:100%}
 
 /* ============ STAT GROUP BANDS ============ */
-.statband{grid-column:1/-1;display:flex;align-items:center;gap:14px;margin-top:18px;
-  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--muted)}
+.statband{grid-column:1/-1;display:flex;align-items:center;margin-top:16px;overflow:hidden;
+  border:3px solid #333;background:#333;color:#fff;font-size:13px;letter-spacing:.12em;
+  text-transform:uppercase;font-weight:600;padding-right:16px}
 .statband:first-child{margin-top:0}
-.statband::before{content:"";width:34px;height:3px;border-radius:2px;flex:none}
-.statband.x::before{background:var(--accent)}
-.statband.meta::before{background:var(--gold)}
-.statband.ctx::before{background:var(--faint)}
-.statband .bp{color:var(--paper);font-weight:600}
+.statband::before{content:"\25A0";align-self:stretch;display:flex;align-items:center;
+  padding:12px 15px;border-right:3px solid currentColor;font-size:11px}
+.statband .bp{font-weight:700;padding:12px 0 12px 14px;margin-right:6px}
+.statband.x{background:#333;color:#fff;border-color:#333}
+.statband.meta{background:#004F9F;color:#fff;border-color:#004F9F}
+.statband.ctx{background:#fff;color:#333;border-color:#333}
 
-/* ============ CONVERGENCE PANEL (шесть совпадений) ============ */
-.conv{margin-top:54px}
-.conv-head{display:flex;flex-wrap:wrap;gap:18px 30px;align-items:center;
-  padding:18px 22px;border:1px solid var(--line2);border-radius:5px 5px 0 0;
-  background:var(--bg3);font-family:'IBM Plex Mono',monospace;font-size:11.5px;
-  letter-spacing:.1em;text-transform:uppercase}
-.conv-head .l{display:flex;align-items:center;gap:9px;color:var(--muted)}
-.conv-head .l i{width:18px;height:8px;border-radius:4px;display:inline-block}
-.conv-head .arrow{color:var(--faint);letter-spacing:.05em}
+/* ============ CONVERGENCE PANEL ============ */
+.conv{margin-top:48px;box-shadow:var(--shadow)}
+.conv-head{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:center;
+  padding:16px 20px;border:3px solid #333;background:#fff;font-size:11.5px;
+  letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.conv-head .l{display:flex;align-items:center;gap:9px;color:#333}
+.conv-head .l i{width:20px;height:12px;display:inline-block;border:1px solid #333}
+.conv-head .arrow{color:#333;letter-spacing:.05em}
 .conv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;
-  border:1px solid var(--line2);border-top:none;border-radius:0 0 5px 5px;overflow:hidden}
-.conv-cell{padding:24px 24px 26px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);
-  position:relative;background:var(--bg2)}
+  border:3px solid #333;border-top:none}
+.conv-cell{padding:24px 22px 26px;border-right:3px solid #333;border-bottom:3px solid #333;
+  position:relative;background:#fff;transition:none}
 .conv-cell:nth-child(3n){border-right:none}
 .conv-cell:nth-last-child(-n+3){border-bottom:none}
-.conv-cell .nn{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.1em}
-.conv-cell h5{margin-top:9px;font-family:'Playfair Display',serif;font-weight:700;
-  font-size:1.08rem;color:var(--paper);line-height:1.22}
-.conv-cell p{margin-top:10px;color:var(--muted);font-weight:300;font-size:.9rem;line-height:1.55}
-.conv-cell::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:linear-gradient(180deg,var(--accent),var(--gold))}
+.conv-cell:hover{background:#004F9F;color:#fff}
+.conv-cell:hover .nn{color:#fff}
+.conv-cell:hover h5{color:#fff}
+.conv-cell:hover p{color:#fff}
+.conv-cell .nn{font-size:13px;color:#333;letter-spacing:.1em;font-weight:700}
+.conv-cell h5{margin-top:10px;font-weight:700;font-size:1.02rem;line-height:1.15;text-transform:uppercase;letter-spacing:-.01em}
+.conv-cell p{margin-top:11px;color:#333;font-weight:400;font-size:.88rem;line-height:1.5}
 
-@media(max-width:880px){
+/* ============ HYPOTHESES ============ */
+.hyps{margin-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:0;border:3px solid #333}
+.hyp{border-right:3px solid #333;border-bottom:3px solid #333;padding:26px 26px;background:#fff;position:relative;transition:none}
+.hyp:nth-child(2n){border-right:none}
+.hyp:nth-last-child(-n+2){border-bottom:none}
+.hyp::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:#004F9F}
+.hyp.main::before{background:#333}
+.hyp .code{font-size:12px;letter-spacing:.08em;color:#333;font-weight:700;text-transform:uppercase}
+.hyp h4{margin-top:12px;font-weight:600;font-size:1.04rem;line-height:1.22;text-transform:uppercase;letter-spacing:-.01em}
+.hyp .status{margin-top:18px;display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;letter-spacing:.05em;color:#004F9F;text-transform:uppercase;font-weight:600}
+.hyp .status .tick{width:18px;height:18px;border:2px solid #004F9F;display:grid;place-items:center;font-size:10px}
+.hyp.main .status{color:#333}
+.hyp.main .status .tick{border-color:#333}
+.hyp.utoch .status{color:#333}
+.hyp.utoch .status .tick{border-color:#333}
+.hyp:hover{background:#333;color:#fff}
+.hyp:hover .code,.hyp:hover h4,.hyp:hover .status{color:#fff!important}
+.hyp:hover .status .tick{border-color:#fff}
+.hyp:hover::before{background:#fff}
+
+/* ============ THEORY ============ */
+.theory{margin-top:46px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:3px solid #333}
+.th{border-right:3px solid #333;border-bottom:3px solid #333;padding:24px;background:#fff;transition:none}
+.th:nth-child(3n){border-right:none}
+.th:nth-last-child(-n+3){border-bottom:none}
+.th:hover{background:#004F9F;color:#fff}
+.th:hover .name,.th:hover .role,.th:hover p{color:#fff}
+.th .name{font-weight:700;font-size:1.18rem;text-transform:uppercase;letter-spacing:-.02em}
+.th .role{margin-top:5px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#004F9F;font-weight:600}
+.th p{margin-top:13px;font-size:.88rem;color:#333;font-weight:400;line-height:1.5}
+
+/* ============ PULLQUOTE ============ */
+.pull{padding:100px 0;background:#333;border-bottom:3px solid #333}
+.pull blockquote{
+  font-family:'IBM Plex Mono',monospace;font-style:normal;font-weight:700;
+  font-size:clamp(1.4rem,3.6vw,2.8rem);line-height:1.2;color:#fff;
+  max-width:26ch;margin:0 auto;text-align:center;position:relative;text-transform:uppercase;letter-spacing:-.02em;
+}
+.pull blockquote::before{content:"«";color:#004F9F}
+.pull blockquote::after{content:"»";color:#004F9F}
+
+/* ============ CONCLUSION ============ */
+.concl-grid{margin-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:0;border:3px solid #333}
+.cbox{padding:30px 28px;background:#fff;transition:none;border-right:3px solid #333}
+.cbox:last-child{border-right:none;border-left:8px solid #004F9F}
+.cbox:first-child{border-left:8px solid #333}
+.cbox:hover{background:#333;color:#fff}
+.cbox:hover h4,.cbox:hover p{color:#fff}
+.cbox h4{font-weight:700;font-size:1.3rem;text-transform:uppercase;letter-spacing:-.02em}
+.cbox p{margin-top:14px;color:#333;font-weight:400;font-size:.95rem;line-height:1.55}
+
+/* ============ TIMELINE (curve) ============ */
+.curvewrap{margin-top:48px;border:3px solid #333;background:#fff;padding:28px 26px 22px;box-shadow:var(--shadow)}
+.curvewrap svg{width:100%;height:auto;display:block;overflow:visible}
+.legend{display:flex;gap:24px;flex-wrap:wrap;margin-top:10px;font-size:11px;letter-spacing:.05em;color:#333;text-transform:uppercase}
+.legend i{display:inline-block;width:24px;height:10px;margin-right:8px;vertical-align:0;border:1px solid #333}
+.tl-cards{margin-top:22px;display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:3px solid #333}
+.tlc{border-right:3px solid #333;padding:16px 14px 18px;background:#fff;border-top:8px solid #333;transition:none}
+.tlc:last-child{border-right:none}
+.tlc.x{border-top-color:#333}
+.tlc.meta{border-top-color:#004F9F}
+.tlc:hover{background:#333;color:#fff}
+.tlc.meta:hover{background:#004F9F}
+.tlc:hover .d,.tlc:hover .t,.tlc:hover .pl{color:#fff}
+.tlc .d{font-size:11px;color:#333;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.tlc .t{margin-top:7px;font-weight:700;font-size:1rem;line-height:1.1;text-transform:uppercase;letter-spacing:-.01em}
+.tlc .pl{margin-top:9px;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#333}
+
+/* ============ FOOTER ============ */
+footer{padding:64px 0 80px;text-align:center;background:#333;color:#fff}
+footer .ft-title{font-family:'IBM Plex Mono',monospace;font-style:normal;font-size:1.2rem;color:#fff;text-transform:uppercase;line-height:1.3;max-width:40ch;margin:0 auto;font-weight:600}
+footer .ft-meta{margin-top:22px;font-size:12px;color:#fff;letter-spacing:.05em;line-height:2;text-transform:uppercase}
+footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
+
+/* ============ АДАПТИВ ============ */
+@media(max-width:980px){
   .keysplit{grid-template-columns:1fr}
+  .keyside.x{border-right:none;border-bottom:3px solid #333}
   .conv-grid{grid-template-columns:1fr}
   .conv-cell{border-right:none}
-  .conv-cell:nth-last-child(-n+3){border-bottom:1px solid var(--line)}
+  .conv-cell:nth-last-child(-n+3){border-bottom:3px solid #333}
   .conv-cell:last-child{border-bottom:none}
+  .theory{grid-template-columns:1fr}
+  .th{border-right:none}
   .facts-inner{grid-template-columns:repeat(3,1fr)}
   .fact:nth-child(3){border-right:none}
-  .fact:nth-child(1),.fact:nth-child(2),.fact:nth-child(3){border-bottom:1px solid var(--line)}
+  .fact:nth-child(-n+3){border-bottom:3px solid #333}
   .models,.hyps,.concl-grid,.charts{grid-template-columns:1fr}
+  .hyp{border-right:none}
+  .cbox{border-right:none;border-bottom:3px solid #333}
+  .cbox:last-child{border-bottom:none}
   .card.span2{grid-column:span 1}
   .tl-cards{grid-template-columns:1fr 1fr}
-  .theory{grid-template-columns:1fr 1fr}
   .matrix{overflow-x:auto}
-  .matrix table{min-width:620px}
-  section{padding:76px 0}
+  .matrix table{min-width:640px}
+  section{padding:68px 0}
 }
-@media(max-width:540px){
+@media(max-width:520px){
   .facts-inner{grid-template-columns:repeat(2,1fr)}
-  .fact{border-right:none;border-bottom:1px solid var(--line)}
-  .theory{grid-template-columns:1fr}
+  .fact{border-right:none}
+  .hero-meta{width:100%}
+  .hero-meta span{border-right:none;border-bottom:3px solid #333}
+  .hero-meta span:last-child{border-bottom:none}
 }
 </style>
 </head>
 <body>
+<!-- паттерн штриховки для вторичных элементов (контраст без цвета) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <rect width="9" height="9" fill="#ffffff"/>
+    <line x1="0" y1="0" x2="0" y2="9" stroke="#333333" stroke-width="4"/>
+  </pattern>
+</defs></svg>
 
 <!-- ===== HERO ===== -->
 <header class="hero">
@@ -386,6 +432,12 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
   </div>
 </div>
 
+<!-- ===== БЕГУЩАЯ СТРОКА ===== -->
+<div class="marquee"><div class="track">
+<span>Медиамагнаты</span><span>Цифровая медиавласть</span><span>Алгоритмическая видимость</span><span>X · персоналистская модель</span><span>Meta · институциональная модель</span><span>Структурный инвариант</span>
+<span>Медиамагнаты</span><span>Цифровая медиавласть</span><span>Алгоритмическая видимость</span><span>X · персоналистская модель</span><span>Meta · институциональная модель</span><span>Структурный инвариант</span>
+</div></div>
+
 <!-- ===== PROBLEM / FLOW ===== -->
 <section>
   <div class="wrap">
@@ -396,46 +448,46 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
       <svg viewBox="0 0 1120 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Схема: от медиатизации к политическому авторитету">
         <defs>
           <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#d6452f"/><stop offset="1" stop-color="#c9a24b"/>
+            <stop offset="0" stop-color="#333333"/><stop offset="1" stop-color="#004F9F"/>
           </linearGradient>
           <marker id="ar" markerWidth="11" markerHeight="11" refX="6" refY="5" orient="auto">
-            <path d="M0,0 L10,5 L0,10 z" fill="#9d9389"/>
+            <path d="M0,0 L10,5 L0,10 z" fill="#333333"/>
           </marker>
         </defs>
         <!-- nodes -->
-        <g font-family="Manrope,sans-serif">
+        <g font-family="IBM Plex Mono">
           <!-- node template -->
           <g>
-            <rect x="8" y="68" width="200" height="94" rx="5" fill="#1b1714" stroke="rgba(236,227,214,.22)"/>
-            <text x="108" y="100" text-anchor="middle" fill="#f4ecdf" font-size="17" font-weight="700">Медиатизация</text>
-            <text x="108" y="122" text-anchor="middle" fill="#9d9389" font-size="12.5">политика подчиняется</text>
-            <text x="108" y="139" text-anchor="middle" fill="#9d9389" font-size="12.5">логике площадок</text>
+            <rect x="8" y="68" width="200" height="94" fill="#FFFFFF" stroke="#333333"/>
+            <text x="108" y="100" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">Медиатизация</text>
+            <text x="108" y="122" text-anchor="middle" fill="#333333" font-size="12.5">политика подчиняется</text>
+            <text x="108" y="139" text-anchor="middle" fill="#333333" font-size="12.5">логике площадок</text>
           </g>
           <g>
-            <rect x="312" y="68" width="200" height="94" rx="5" fill="#1b1714" stroke="rgba(236,227,214,.22)"/>
-            <text x="412" y="100" text-anchor="middle" fill="#f4ecdf" font-size="17" font-weight="700">Алгоритм</text>
-            <text x="412" y="122" text-anchor="middle" fill="#9d9389" font-size="12.5">видимость задаёт</text>
-            <text x="412" y="139" text-anchor="middle" fill="#9d9389" font-size="12.5">собственник кода</text>
+            <rect x="312" y="68" width="200" height="94" fill="#FFFFFF" stroke="#333333"/>
+            <text x="412" y="100" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">Алгоритм</text>
+            <text x="412" y="122" text-anchor="middle" fill="#333333" font-size="12.5">видимость задаёт</text>
+            <text x="412" y="139" text-anchor="middle" fill="#333333" font-size="12.5">собственник кода</text>
           </g>
           <g>
-            <rect x="616" y="68" width="200" height="94" rx="5" fill="#1b1714" stroke="rgba(236,227,214,.22)"/>
-            <text x="716" y="100" text-anchor="middle" fill="#f4ecdf" font-size="17" font-weight="700">Видимость</text>
-            <text x="716" y="122" text-anchor="middle" fill="#9d9389" font-size="12.5">условие признания</text>
-            <text x="716" y="139" text-anchor="middle" fill="#9d9389" font-size="12.5">и поддержки</text>
+            <rect x="616" y="68" width="200" height="94" fill="#FFFFFF" stroke="#333333"/>
+            <text x="716" y="100" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">Видимость</text>
+            <text x="716" y="122" text-anchor="middle" fill="#333333" font-size="12.5">условие признания</text>
+            <text x="716" y="139" text-anchor="middle" fill="#333333" font-size="12.5">и поддержки</text>
           </g>
           <g>
-            <rect x="912" y="60" width="200" height="110" rx="5" fill="#221d18" stroke="#d6452f"/>
-            <text x="1012" y="98" text-anchor="middle" fill="#f4ecdf" font-size="17" font-weight="700">Политический</text>
-            <text x="1012" y="119" text-anchor="middle" fill="#f4ecdf" font-size="17" font-weight="700">авторитет</text>
-            <text x="1012" y="143" text-anchor="middle" fill="#c9a24b" font-size="12.5" font-family="IBM Plex Mono">зависимая переменная</text>
+            <rect x="912" y="60" width="200" height="110" fill="#FFFFFF" stroke="#333333"/>
+            <text x="1012" y="98" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">Политический</text>
+            <text x="1012" y="119" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">авторитет</text>
+            <text x="1012" y="143" text-anchor="middle" fill="#004F9F" font-size="12.5" font-family="IBM Plex Mono">зависимая переменная</text>
           </g>
           <!-- arrows -->
-          <line x1="214" y1="115" x2="304" y2="115" stroke="#9d9389" stroke-width="1.5" marker-end="url(#ar)"/>
-          <line x1="518" y1="115" x2="608" y2="115" stroke="#9d9389" stroke-width="1.5" marker-end="url(#ar)"/>
-          <line x1="822" y1="115" x2="904" y2="115" stroke="#9d9389" stroke-width="1.5" marker-end="url(#ar)"/>
-          <text x="560" y="206" text-anchor="middle" fill="#6f665d" font-size="12" font-family="IBM Plex Mono" letter-spacing="2">МАГНАТ УПРАВЛЯЕТ ВТОРЫМ ЗВЕНОМ — И ТЕМ САМЫМ ВСЕЙ ЦЕПОЧКОЙ</text>
+          <line x1="214" y1="115" x2="304" y2="115" stroke="#333333" stroke-width="1.5" marker-end="url(#ar)"/>
+          <line x1="518" y1="115" x2="608" y2="115" stroke="#333333" stroke-width="1.5" marker-end="url(#ar)"/>
+          <line x1="822" y1="115" x2="904" y2="115" stroke="#333333" stroke-width="1.5" marker-end="url(#ar)"/>
+          <text x="560" y="206" text-anchor="middle" fill="#333333" font-size="12" font-family="IBM Plex Mono" letter-spacing="2">МАГНАТ УПРАВЛЯЕТ ВТОРЫМ ЗВЕНОМ — И ТЕМ САМЫМ ВСЕЙ ЦЕПОЧКОЙ</text>
           <line x1="270" y1="40" x2="850" y2="40" stroke="url(#g1)" stroke-width="2"/>
-          <circle cx="412" cy="40" r="4" fill="#c9a24b"/>
+          <circle cx="412" cy="40" r="4" fill="#004F9F"/>
         </g>
       </svg>
     </div>
@@ -450,12 +502,12 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
     <p class="lead reveal">Чтобы отделить свойства личности от свойств самой власти площадки, в работе взяты два предельно различных случая при общем объекте воздействия. Сравнение строится по методу наибольшего различия.</p>
     <div class="keysplit reveal">
       <div class="keyside x">
-        <div class="kp">Красный · площадка X</div>
+        <div class="kp">Угольный · площадка X</div>
         <div class="kh">Персоналистская модель</div>
         <div class="kd">И. Маск — собственник действует как открытый политический субъект. Этим цветом отмечены все данные по X.</div>
       </div>
       <div class="keyside meta">
-        <div class="kp">Золотой · экосистема Meta</div>
+        <div class="kp">Синий · экосистема Meta</div>
         <div class="kh">Институциональная модель</div>
         <div class="kd">М. Цукерберг — воля собственника скрыта за процедурами. Этим цветом отмечены все данные по Meta.</div>
       </div>
@@ -531,7 +583,7 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
   <div class="wrap">
     <div class="sec-tag reveal">Статистический разбор</div>
     <h2 class="reveal">Цифры, на которых держатся выводы</h2>
-    <p class="lead reveal">Эмпирические данные обоих случаев — измеримые следы того, как решения владельца площадки превращаются в перепады политической видимости. Данные сгруппированы по площадкам: <b style="color:var(--accent2)">красным</b> отмечен случай X, <b style="color:var(--gold)">золотым</b> — случай Meta.</p>
+    <p class="lead reveal">Эмпирические данные обоих случаев — измеримые следы того, как решения владельца площадки превращаются в перепады политической видимости. Данные сгруппированы по площадкам: <b style="color:var(--accent2)">угольным</b> отмечен случай X, <b style="color:var(--gold)">синим</b> — случай Meta.</p>
 
     <div class="charts">
 
@@ -543,25 +595,25 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
         <div class="ct">Случай X · алгоритм</div>
         <h3>Прирост охвата владельца против остальных</h3>
         <svg viewBox="0 0 440 240" role="img" aria-label="Сравнение прироста просмотров и распространения">
-          <line x1="50" y1="200" x2="430" y2="200" stroke="#6f665d" stroke-width="1"/>
-          <g stroke="rgba(236,227,214,.10)" stroke-width="1">
+          <line x1="50" y1="200" x2="430" y2="200" stroke="#333333" stroke-width="1"/>
+          <g stroke="#cccccc" stroke-width="1">
             <line x1="50" y1="150" x2="430" y2="150"/><line x1="50" y1="100" x2="430" y2="100"/><line x1="50" y1="50" x2="430" y2="50"/>
           </g>
-          <g font-family="IBM Plex Mono" font-size="9" fill="#6f665d" text-anchor="end">
+          <g font-family="IBM Plex Mono" font-size="9" fill="#333333" text-anchor="end">
             <text x="44" y="203">0</text><text x="44" y="153">80</text><text x="44" y="103">160</text><text x="44" y="53">240</text>
           </g>
-          <rect x="80" y="113.6" width="46" height="86.4" fill="#d6452f" rx="2"/>
-          <rect x="132" y="164.4" width="46" height="35.6" fill="#4a423b" rx="2"/>
-          <text x="103" y="106" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#ece3d6">+138%</text>
-          <text x="155" y="157" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#9d9389">+57%</text>
-          <text x="129" y="222" text-anchor="middle" font-family="Manrope" font-size="11" fill="#9d9389">Просмотры</text>
-          <rect x="262" y="51.3" width="46" height="148.7" fill="#d6452f" rx="2"/>
-          <rect x="314" y="104.9" width="46" height="95.1" fill="#4a423b" rx="2"/>
-          <text x="285" y="44" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#ece3d6">+238%</text>
-          <text x="337" y="97" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#9d9389">+152%</text>
-          <text x="311" y="222" text-anchor="middle" font-family="Manrope" font-size="11" fill="#9d9389">Распространение</text>
-          <rect x="80" y="232" width="12" height="8" rx="2" fill="#d6452f"/><text x="97" y="239" font-family="IBM Plex Mono" font-size="9.5" fill="#9d9389">аккаунт владельца</text>
-          <rect x="240" y="232" width="12" height="8" rx="2" fill="#4a423b"/><text x="257" y="239" font-family="IBM Plex Mono" font-size="9.5" fill="#9d9389">прочие аккаунты</text>
+          <rect x="80" y="113.6" width="46" height="86.4" fill="#333333"/>
+          <rect x="132" y="164.4" width="46" height="35.6" fill="url(#hatch)"/>
+          <text x="103" y="106" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">+138%</text>
+          <text x="155" y="157" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">+57%</text>
+          <text x="129" y="222" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">Просмотры</text>
+          <rect x="262" y="51.3" width="46" height="148.7" fill="#333333"/>
+          <rect x="314" y="104.9" width="46" height="95.1" fill="url(#hatch)"/>
+          <text x="285" y="44" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">+238%</text>
+          <text x="337" y="97" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">+152%</text>
+          <text x="311" y="222" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">Распространение</text>
+          <rect x="80" y="232" width="12" height="8" fill="#333333"/><text x="97" y="239" font-family="IBM Plex Mono" font-size="9.5" fill="#333333">аккаунт владельца</text>
+          <rect x="240" y="232" width="12" height="8" fill="url(#hatch)"/><text x="257" y="239" font-family="IBM Plex Mono" font-size="9.5" fill="#333333">прочие аккаунты</text>
         </svg>
         <p class="note">Метод разности разностей: дополнительный прирост аккаунта владельца — около <b style="color:var(--ink)">6,4 млн просмотров в день</b> сверх общего роста по выборке. Структурный разрыв зафиксирован около 13 июля 2024 года.</p>
         <div class="src">Источник: Грэм Т., Андреевич М. Анализ структурных разрывов (метод CUSUM, 56 184 публикации). QUT, 2024</div>
@@ -572,23 +624,23 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
         <div class="ct">Случай X · вирусность</div>
         <h3>Просмотры отдельных записей, июль 2024</h3>
         <svg viewBox="0 0 440 240" role="img" aria-label="Просмотры записей в миллионах">
-          <g font-family="Manrope" font-size="11" fill="#9d9389" text-anchor="end">
+          <g font-family="IBM Plex Mono" font-size="11" fill="#333333" text-anchor="end">
             <text x="142" y="38">Поддержка</text>
             <text x="142" y="86">«TRUMP VANCE»</text>
             <text x="142" y="134">Критика СМИ</text>
             <text x="142" y="182">Эфир в Spaces*</text>
           </g>
-          <rect x="150" y="26" width="280" height="20" rx="3" fill="#d6452f"/>
-          <rect x="150" y="74" width="102.5" height="20" rx="3" fill="#e8714f"/>
-          <rect x="150" y="122" width="73.75" height="20" rx="3" fill="#e8714f"/>
-          <rect x="150" y="170" width="105" height="20" rx="3" fill="#c9a24b"/>
-          <g font-family="IBM Plex Mono" font-size="11" fill="#ece3d6">
-            <text x="436" y="41" text-anchor="end" fill="#14110f" font-weight="600">224 млн</text>
+          <rect x="150" y="26" width="280" height="20" fill="#333333"/>
+          <rect x="150" y="74" width="102.5" height="20" fill="#333333"/>
+          <rect x="150" y="122" width="73.75" height="20" fill="#333333"/>
+          <rect x="150" y="170" width="105" height="20" fill="#004F9F"/>
+          <g font-family="IBM Plex Mono" font-size="11" fill="#333333">
+            <text x="436" y="41" text-anchor="end" fill="#FFFFFF" font-weight="600">224 млн</text>
             <text x="258" y="89">82 млн</text>
             <text x="229" y="137">59 млн</text>
             <text x="261" y="185">73–95 млн</text>
           </g>
-          <text x="150" y="222" font-family="IBM Plex Mono" font-size="9" fill="#6f665d">* совокупный охват записи и перепубликаций в первые дни</text>
+          <text x="150" y="222" font-family="IBM Plex Mono" font-size="9" fill="#333333">* совокупный охват записи и перепубликаций в первые дни</text>
         </svg>
         <p class="note">Одна запись с поддержкой — <b style="color:var(--ink)">2,21 млн отметок «нравится», 335 тыс. распространений</b>: одна из самых вовлекающих в истории площадки.</p>
         <div class="src">Источник: метрики площадки X, июль 2024; приведено в: Грэм Т., Андреевич М., 2024</div>
@@ -599,17 +651,17 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
         <div class="ct">Случай X · группы аккаунтов</div>
         <h3>Кому достался дополнительный охват</h3>
         <svg viewBox="0 0 440 180" role="img" aria-label="Прирост просмотров республиканских и демократических аккаунтов">
-          <g font-family="Manrope" font-size="12" fill="#9d9389" text-anchor="end">
+          <g font-family="IBM Plex Mono" font-size="12" fill="#333333" text-anchor="end">
             <text x="150" y="55">Республиканские</text>
             <text x="150" y="115">Демократические</text>
           </g>
-          <rect x="160" y="38" width="252" height="26" rx="3" fill="#d6452f"/>
-          <rect x="160" y="98" width="7" height="26" rx="3" fill="#4a423b"/>
+          <rect x="160" y="38" width="252" height="26" fill="#333333"/>
+          <rect x="160" y="98" width="7" height="26" fill="url(#hatch)"/>
           <g font-family="IBM Plex Mono" font-size="12">
-            <text x="172" y="56" fill="#14110f" font-weight="600">+952 тыс. в день</text>
-            <text x="176" y="116" fill="#9d9389">≈ 0 · незначимо</text>
+            <text x="172" y="56" fill="#FFFFFF" font-weight="600">+952 тыс. в день</text>
+            <text x="176" y="116" fill="#333333">≈ 0 · незначимо</text>
           </g>
-          <text x="160" y="158" font-family="IBM Plex Mono" font-size="9.5" fill="#6f665d">эффект значим только по просмотрам (p = 0,021)</text>
+          <text x="160" y="158" font-family="IBM Plex Mono" font-size="9.5" fill="#333333">эффект значим только по просмотрам (p = 0,021)</text>
         </svg>
         <p class="note">Дополнительное усиление получили именно <b style="color:var(--ink)">республикански-ориентированные аккаунты</b> — отдельно от общего роста охватов и только по просмотрам. Это указывает на вмешательство на уровне ленты рекомендаций «Для вас».</p>
         <div class="src">Источник: Грэм Т., Андреевич М. Анализ структурных разрывов. QUT, 2024</div>
@@ -621,19 +673,19 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
         <h3>Опрос о восстановлении аккаунта</h3>
         <svg viewBox="0 0 440 200" role="img" aria-label="Результат опроса 51,8 процента за">
           <g transform="translate(110,100)">
-            <circle r="68" fill="none" stroke="#3a332d" stroke-width="22"/>
-            <circle r="68" fill="none" stroke="#d6452f" stroke-width="22"
+            <circle r="68" fill="none" stroke="url(#hatch)" stroke-width="22"/>
+            <circle r="68" fill="none" stroke="#333333" stroke-width="22"
               stroke-dasharray="221.3 427.3" stroke-dashoffset="0" transform="rotate(-90)"/>
-            <text x="0" y="2" text-anchor="middle" font-family="Playfair Display" font-weight="900" font-size="34" fill="#f4ecdf">51,8%</text>
-            <text x="0" y="24" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#9d9389">за восстановление</text>
+            <text x="0" y="2" text-anchor="middle" font-family="IBM Plex Mono" font-weight="900" font-size="34" fill="#333333">51,8%</text>
+            <text x="0" y="24" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#333333">за восстановление</text>
           </g>
-          <g transform="translate(230,60)" font-family="Manrope" font-size="13">
-            <rect x="0" y="-10" width="12" height="12" rx="2" fill="#d6452f"/>
-            <text x="22" y="0" fill="#ece3d6">7,81 млн — «за»</text>
-            <rect x="0" y="26" width="12" height="12" rx="2" fill="#3a332d"/>
-            <text x="22" y="36" fill="#9d9389">&#8776; 7,2 млн — «против»</text>
-            <text x="0" y="78" font-family="IBM Plex Mono" font-size="11" fill="#c9a24b">всего &gt; 15 000 000 голосов</text>
-            <text x="0" y="100" font-family="IBM Plex Mono" font-size="10" fill="#6f665d">оформлено как «воля народа»</text>
+          <g transform="translate(230,60)" font-family="IBM Plex Mono" font-size="13">
+            <rect x="0" y="-10" width="12" height="12" fill="#333333"/>
+            <text x="22" y="0" fill="#333333">7,81 млн — «за»</text>
+            <rect x="0" y="26" width="12" height="12" fill="url(#hatch)"/>
+            <text x="22" y="36" fill="#333333">&#8776; 7,2 млн — «против»</text>
+            <text x="0" y="78" font-family="IBM Plex Mono" font-size="11" fill="#004F9F">всего &gt; 15 000 000 голосов</text>
+            <text x="0" y="100" font-family="IBM Plex Mono" font-size="10" fill="#333333">оформлено как «воля народа»</text>
           </g>
         </svg>
         <div class="src">Источник: опрос на площадке X (Vox Populi), 19 ноября 2022</div>
@@ -648,11 +700,11 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
         <h3>Асимметрия рекламного производства: Трамп против Клинтон</h3>
         <div class="ratiorow" style="margin-top:24px">
           <div class="rl"><span>Кампания Трампа</span><b>5 900 000 рекламных единиц</b></div>
-          <div class="rbar"><span style="width:100%;background:linear-gradient(90deg,#d6452f,#e8714f)"></span></div>
+          <div class="rbar"><span style="width:100%;background:linear-gradient(90deg,#333333,#333333)"></span></div>
         </div>
         <div class="ratiorow">
           <div class="rl"><span>Кампания Клинтон</span><b>&#8776; 66 000 единиц</b></div>
-          <div class="rbar"><span style="width:1.1%;background:#c9a24b;min-width:4px"></span></div>
+          <div class="rbar"><span style="width:1.1%;background:#004F9F;min-width:4px"></span></div>
         </div>
         <p class="note">Разрыв — примерно <b style="color:var(--ink)">в 89 раз</b>. Расходы на площадке за июнь–ноябрь 2016 — около 44 млн долларов; в одном задокументированном случае 328 тыс. долларов рекламы принесли 1,32 млн долларов пожертвований за день.</p>
         <div class="src">Источник: The New Yorker; The Atlantic, 2017 (операция «Project Alamo»)</div>
@@ -663,15 +715,15 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
         <div class="ct">Случай Meta · эффект отключения</div>
         <h3>Дискуссия об «избирательном мошенничестве» за неделю</h3>
         <svg viewBox="0 0 440 200" role="img" aria-label="Падение объёма дискуссии на 73 процента">
-          <line x1="40" y1="160" x2="420" y2="160" stroke="#6f665d" stroke-width="1"/>
-          <rect x="90" y="40" width="90" height="120" rx="3" fill="#4a423b"/>
-          <rect x="270" y="127.6" width="90" height="32.4" rx="3" fill="#d6452f"/>
-          <text x="135" y="32" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#9d9389">100%</text>
-          <text x="315" y="120" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#ece3d6">27%</text>
-          <text x="135" y="178" text-anchor="middle" font-family="Manrope" font-size="11" fill="#9d9389">до ограничений</text>
-          <text x="315" y="178" text-anchor="middle" font-family="Manrope" font-size="11" fill="#9d9389">после</text>
-          <path d="M195,90 Q235,70 262,118" fill="none" stroke="#e8714f" stroke-width="1.5" stroke-dasharray="3 3"/>
-          <text x="228" y="64" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-weight="700" font-size="22" fill="#e8714f">&#8722;73%</text>
+          <line x1="40" y1="160" x2="420" y2="160" stroke="#333333" stroke-width="1"/>
+          <rect x="90" y="40" width="90" height="120" fill="url(#hatch)"/>
+          <rect x="270" y="127.6" width="90" height="32.4" fill="#333333"/>
+          <text x="135" y="32" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#333333">100%</text>
+          <text x="315" y="120" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#333333">27%</text>
+          <text x="135" y="178" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">до ограничений</text>
+          <text x="315" y="178" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">после</text>
+          <path d="M195,90 Q235,70 262,118" fill="none" stroke="#333333" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <text x="228" y="64" text-anchor="middle" font-family="IBM Plex Mono" font-style="italic" font-weight="700" font-size="22" fill="#333333">&#8722;73%</text>
         </svg>
         <p class="note">Отключение одного аккаунта измеримо сжало целую тему публичной повестки.</p>
         <div class="src">Источник: Zignal Labs; The Washington Post, 2021</div>
@@ -709,6 +761,12 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
   </div>
 </section>
 
+<!-- ===== БЕГУЩАЯ СТРОКА (синяя) ===== -->
+<div class="marquee blue rev"><div class="track">
+<span>Видимость = условие признания</span><span>Кто владеет площадкой — владеет вниманием</span><span>Авторитет отзываем одним решением собственника</span>
+<span>Видимость = условие признания</span><span>Кто владеет площадкой — владеет вниманием</span><span>Авторитет отзываем одним решением собственника</span>
+</div></div>
+
 <!-- ===== PULLQUOTE ===== -->
 <div class="pull">
   <div class="wrap">
@@ -727,76 +785,76 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
       <svg viewBox="0 0 1080 380" role="img" aria-label="Кривая политической видимости Трампа во времени">
         <defs>
           <linearGradient id="fillMeta" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#c9a24b" stop-opacity=".28"/><stop offset="1" stop-color="#c9a24b" stop-opacity="0"/>
+            <stop offset="0" stop-color="#004F9F" stop-opacity=".28"/><stop offset="1" stop-color="#004F9F" stop-opacity="0"/>
           </linearGradient>
           <linearGradient id="fillX" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#d6452f" stop-opacity=".30"/><stop offset="1" stop-color="#d6452f" stop-opacity="0"/>
+            <stop offset="0" stop-color="#333333" stop-opacity=".30"/><stop offset="1" stop-color="#333333" stop-opacity="0"/>
           </linearGradient>
         </defs>
 
         <!-- period background zones -->
-        <rect x="70" y="20" width="470" height="290" fill="#c9a24b" opacity=".05"/>
-        <rect x="540" y="20" width="470" height="290" fill="#d6452f" opacity=".05"/>
-        <line x1="540" y1="20" x2="540" y2="310" stroke="rgba(236,227,214,.18)" stroke-width="1" stroke-dasharray="4 4"/>
-        <text x="305" y="42" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#c9a24b" letter-spacing="2">ЭПОХА META · 2016—2021</text>
-        <text x="775" y="42" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#e8714f" letter-spacing="2">ЭПОХА X · 2022—2024</text>
+        <rect x="70" y="20" width="470" height="290" fill="#004F9F" opacity=".05"/>
+        <rect x="540" y="20" width="470" height="290" fill="#333333" opacity=".05"/>
+        <line x1="540" y1="20" x2="540" y2="310" stroke="#333333" stroke-width="1" stroke-dasharray="4 4"/>
+        <text x="305" y="42" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#004F9F" letter-spacing="2">ЭПОХА META · 2016—2021</text>
+        <text x="775" y="42" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333" letter-spacing="2">ЭПОХА X · 2022—2024</text>
 
         <!-- y axis hint -->
-        <text x="60" y="70" text-anchor="end" font-family="IBM Plex Mono" font-size="9" fill="#6f665d">высокая</text>
-        <text x="60" y="305" text-anchor="end" font-family="IBM Plex Mono" font-size="9" fill="#6f665d">ноль</text>
-        <line x1="70" y1="60" x2="70" y2="310" stroke="#3a332d" stroke-width="1"/>
-        <line x1="70" y1="310" x2="1010" y2="310" stroke="#6f665d" stroke-width="1"/>
-        <text x="40" y="190" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#9d9389" transform="rotate(-90 40 190)" letter-spacing="2">ВИДИМОСТЬ / АВТОРИТЕТ</text>
+        <text x="60" y="70" text-anchor="end" font-family="IBM Plex Mono" font-size="9" fill="#333333">высокая</text>
+        <text x="60" y="305" text-anchor="end" font-family="IBM Plex Mono" font-size="9" fill="#333333">ноль</text>
+        <line x1="70" y1="60" x2="70" y2="310" stroke="url(#hatch)" stroke-width="1"/>
+        <line x1="70" y1="310" x2="1010" y2="310" stroke="#333333" stroke-width="1"/>
+        <text x="40" y="190" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#333333" transform="rotate(-90 40 190)" letter-spacing="2">ВИДИМОСТЬ / АВТОРИТЕТ</text>
 
         <!-- Meta-era area + line: 2016 rise -> Jan21 crash -> May21 flat low -->
         <path d="M110,210 C190,140 240,120 300,110 L300,110 C330,108 360,112 390,120 L390,120 L408,300 C430,300 470,300 500,300 L520,298"
-              fill="none" stroke="#c9a24b" stroke-width="2.5"/>
+              fill="none" stroke="#004F9F" stroke-width="2.5"/>
         <path d="M110,210 C190,140 240,120 300,110 C330,108 360,112 390,120 L408,300 C430,300 470,300 500,300 L520,298 L520,310 L110,310 Z"
               fill="url(#fillMeta)"/>
 
         <!-- crash drop marker -->
-        <line x1="399" y1="120" x2="408" y2="300" stroke="#d6452f" stroke-width="2.5"/>
+        <line x1="399" y1="120" x2="408" y2="300" stroke="#333333" stroke-width="2.5"/>
 
         <!-- X-era: Nov22 jump -> 2024 high -->
         <path d="M560,300 L575,300 C585,180 600,150 640,140 C720,120 820,95 960,80"
-              fill="none" stroke="#d6452f" stroke-width="2.5"/>
+              fill="none" stroke="#333333" stroke-width="2.5"/>
         <path d="M560,300 L575,300 C585,180 600,150 640,140 C720,120 820,95 960,80 L960,310 L560,310 Z"
               fill="url(#fillX)"/>
-        <line x1="575" y1="300" x2="585" y2="175" stroke="#d6452f" stroke-width="2.5"/>
+        <line x1="575" y1="300" x2="585" y2="175" stroke="#333333" stroke-width="2.5"/>
 
         <!-- event markers -->
         <g font-family="IBM Plex Mono" font-size="10">
           <!-- 2016 -->
-          <circle cx="110" cy="210" r="5" fill="#c9a24b"/>
-          <text x="110" y="338" text-anchor="middle" fill="#9d9389">2016</text>
-          <text x="110" y="352" text-anchor="middle" fill="#6f665d" font-size="9">конструирование</text>
+          <circle cx="110" cy="210" r="5" fill="#004F9F"/>
+          <text x="110" y="338" text-anchor="middle" fill="#333333">2016</text>
+          <text x="110" y="352" text-anchor="middle" fill="#333333" font-size="9">конструирование</text>
           <!-- Jan 2021 crash -->
-          <circle cx="404" cy="300" r="5" fill="#d6452f"/>
-          <text x="404" y="338" text-anchor="middle" fill="#ece3d6">янв 2021</text>
-          <text x="404" y="352" text-anchor="middle" fill="#6f665d" font-size="9">отключение</text>
+          <circle cx="404" cy="300" r="5" fill="#333333"/>
+          <text x="404" y="338" text-anchor="middle" fill="#333333">янв 2021</text>
+          <text x="404" y="352" text-anchor="middle" fill="#333333" font-size="9">отключение</text>
           <!-- May 2021 -->
-          <circle cx="500" cy="300" r="4" fill="#c9a24b"/>
-          <text x="500" y="338" text-anchor="middle" fill="#9d9389">май 2021</text>
-          <text x="500" y="352" text-anchor="middle" fill="#6f665d" font-size="9">узаконивание</text>
+          <circle cx="500" cy="300" r="4" fill="#004F9F"/>
+          <text x="500" y="338" text-anchor="middle" fill="#333333">май 2021</text>
+          <text x="500" y="352" text-anchor="middle" fill="#333333" font-size="9">узаконивание</text>
           <!-- Nov 2022 jump -->
-          <circle cx="580" cy="175" r="5" fill="#d6452f"/>
-          <text x="588" y="338" text-anchor="middle" fill="#ece3d6">ноя 2022</text>
-          <text x="588" y="352" text-anchor="middle" fill="#6f665d" font-size="9">восстановление</text>
+          <circle cx="580" cy="175" r="5" fill="#333333"/>
+          <text x="588" y="338" text-anchor="middle" fill="#333333">ноя 2022</text>
+          <text x="588" y="352" text-anchor="middle" fill="#333333" font-size="9">восстановление</text>
           <!-- 2024 -->
-          <circle cx="960" cy="80" r="5" fill="#d6452f"/>
-          <text x="955" y="338" text-anchor="middle" fill="#ece3d6">2024</text>
-          <text x="955" y="352" text-anchor="middle" fill="#6f665d" font-size="9">симбиоз</text>
+          <circle cx="960" cy="80" r="5" fill="#333333"/>
+          <text x="955" y="338" text-anchor="middle" fill="#333333">2024</text>
+          <text x="955" y="352" text-anchor="middle" fill="#333333" font-size="9">симбиоз</text>
         </g>
 
         <!-- callout for crash -->
-        <text x="404" y="112" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-weight="700" font-size="15" fill="#e8714f">обрыв доступа</text>
+        <text x="404" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-style="italic" font-weight="700" font-size="15" fill="#333333">обрыв доступа</text>
         <!-- callout for Musk takeover -->
-        <text x="636" y="104" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-weight="700" font-size="15" fill="#e8714f">приход Маска</text>
-        <text x="636" y="122" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-weight="700" font-size="15" fill="#e8714f">к управлению</text>
+        <text x="636" y="104" text-anchor="middle" font-family="IBM Plex Mono" font-style="italic" font-weight="700" font-size="15" fill="#333333">приход Маска</text>
+        <text x="636" y="122" text-anchor="middle" font-family="IBM Plex Mono" font-style="italic" font-weight="700" font-size="15" fill="#333333">к управлению</text>
       </svg>
       <div class="legend">
-        <span><i style="background:#c9a24b"></i>период Meta — конструирование, разрушение, узаконивание</span>
-        <span><i style="background:#d6452f"></i>период X — восстановление и симбиоз</span>
+        <span><i style="background:#004F9F"></i>период Meta — конструирование, разрушение, узаконивание</span>
+        <span><i style="background:#333333"></i>период X — восстановление и симбиоз</span>
       </div>
 
       <div class="tl-cards">
@@ -973,11 +1031,11 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
 const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
 document.querySelectorAll('.reveal').forEach((el,i)=>{
   const sib=[...el.parentElement.querySelectorAll(':scope > .reveal')];
-  el.style.transitionDelay=(sib.indexOf(el)*70)+'ms';
+  el.style.animationDelay=(sib.indexOf(el)*60)+'ms';
   io.observe(el);
 });
 // hero reveal on load
-window.addEventListener('load',()=>{document.querySelectorAll('.hero .reveal').forEach((el,i)=>{el.style.transitionDelay=(i*120)+'ms';el.classList.add('in')})});
+window.addEventListener('load',()=>{document.querySelectorAll('.hero .reveal').forEach((el,i)=>{el.style.animationDelay=(i*90)+'ms';el.classList.add('in')})});
 </script>
 </body>
 </html>
