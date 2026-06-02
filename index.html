@@ -251,7 +251,7 @@ h2{
   font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--gold)}
 .hyp .status .tick{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--gold);
   display:grid;place-items:center;font-size:10px}
-.hyp.uточ .status{color:var(--accent2)}
+.hyp.utoch .status{color:var(--accent2)}
 
 /* ============ THEORY ============ */
 .theory{margin-top:52px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -285,7 +285,57 @@ footer .ft-title{font-family:'Playfair Display',serif;font-style:italic;font-siz
 footer .ft-meta{margin-top:22px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--faint);letter-spacing:.05em;line-height:2}
 footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
 
+/* ============ MODEL KEY (разделение X / Meta) ============ */
+.keysplit{margin-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:0;
+  border:1px solid var(--line2);border-radius:5px;overflow:hidden}
+.keyside{padding:24px 26px;display:flex;flex-direction:column;gap:6px}
+.keyside.x{border-left:4px solid var(--accent);background:linear-gradient(180deg,rgba(214,69,47,.07),transparent)}
+.keyside.meta{border-left:4px solid var(--gold);background:linear-gradient(180deg,rgba(201,162,75,.07),transparent)}
+.keyside .kp{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.keyside.x .kp{color:var(--accent2)}
+.keyside.meta .kp{color:var(--gold)}
+.keyside .kh{font-family:'Playfair Display',serif;font-weight:700;font-size:1.2rem;color:var(--paper);margin-top:2px}
+.keyside .kd{color:var(--muted);font-weight:300;font-size:.92rem;line-height:1.55;margin-top:4px}
+
+/* ============ STAT GROUP BANDS ============ */
+.statband{grid-column:1/-1;display:flex;align-items:center;gap:14px;margin-top:18px;
+  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted)}
+.statband:first-child{margin-top:0}
+.statband::before{content:"";width:34px;height:3px;border-radius:2px;flex:none}
+.statband.x::before{background:var(--accent)}
+.statband.meta::before{background:var(--gold)}
+.statband.ctx::before{background:var(--faint)}
+.statband .bp{color:var(--paper);font-weight:600}
+
+/* ============ CONVERGENCE PANEL (шесть совпадений) ============ */
+.conv{margin-top:54px}
+.conv-head{display:flex;flex-wrap:wrap;gap:18px 30px;align-items:center;
+  padding:18px 22px;border:1px solid var(--line2);border-radius:5px 5px 0 0;
+  background:var(--bg3);font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+  letter-spacing:.1em;text-transform:uppercase}
+.conv-head .l{display:flex;align-items:center;gap:9px;color:var(--muted)}
+.conv-head .l i{width:18px;height:8px;border-radius:4px;display:inline-block}
+.conv-head .arrow{color:var(--faint);letter-spacing:.05em}
+.conv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  border:1px solid var(--line2);border-top:none;border-radius:0 0 5px 5px;overflow:hidden}
+.conv-cell{padding:24px 24px 26px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  position:relative;background:var(--bg2)}
+.conv-cell:nth-child(3n){border-right:none}
+.conv-cell:nth-last-child(-n+3){border-bottom:none}
+.conv-cell .nn{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.1em}
+.conv-cell h5{margin-top:9px;font-family:'Playfair Display',serif;font-weight:700;
+  font-size:1.08rem;color:var(--paper);line-height:1.22}
+.conv-cell p{margin-top:10px;color:var(--muted);font-weight:300;font-size:.9rem;line-height:1.55}
+.conv-cell::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--accent),var(--gold))}
+
 @media(max-width:880px){
+  .keysplit{grid-template-columns:1fr}
+  .conv-grid{grid-template-columns:1fr}
+  .conv-cell{border-right:none}
+  .conv-cell:nth-last-child(-n+3){border-bottom:1px solid var(--line)}
+  .conv-cell:last-child{border-bottom:none}
   .facts-inner{grid-template-columns:repeat(3,1fr)}
   .fact:nth-child(3){border-right:none}
   .fact:nth-child(1),.fact:nth-child(2),.fact:nth-child(3){border-bottom:1px solid var(--line)}
@@ -326,7 +376,7 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
 <div class="facts">
   <div class="wrap" style="padding:0">
     <div class="facts-inner">
-      <div class="fact"><div class="n">2</div><div class="l">контрастных кейса</div></div>
+      <div class="fact"><div class="n">2</div><div class="l">контрастных случая</div></div>
       <div class="fact"><div class="n">7</div><div class="l">измерений сравнения</div></div>
       <div class="fact"><div class="n">5/5</div><div class="l">гипотез подтверждено</div></div>
       <div class="fact"><div class="n">$44 млрд</div><div class="l">цена покупки X</div></div>
@@ -398,6 +448,18 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
     <div class="sec-tag reveal">Две модели власти над вниманием</div>
     <h2 class="reveal">Один и тот же эффект — двумя противоположными способами</h2>
     <p class="lead reveal">Чтобы отделить свойства личности от свойств самой власти площадки, в работе взяты два предельно различных случая при общем объекте воздействия. Сравнение строится по методу наибольшего различия.</p>
+    <div class="keysplit reveal">
+      <div class="keyside x">
+        <div class="kp">Красный · площадка X</div>
+        <div class="kh">Персоналистская модель</div>
+        <div class="kd">И. Маск — собственник действует как открытый политический субъект. Этим цветом отмечены все данные по X.</div>
+      </div>
+      <div class="keyside meta">
+        <div class="kp">Золотой · экосистема Meta</div>
+        <div class="kh">Институциональная модель</div>
+        <div class="kd">М. Цукерберг — воля собственника скрыта за процедурами. Этим цветом отмечены все данные по Meta.</div>
+      </div>
+    </div>
     <div class="models">
       <div class="model m1 reveal">
         <div class="photo">
@@ -469,58 +531,53 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
   <div class="wrap">
     <div class="sec-tag reveal">Статистический разбор</div>
     <h2 class="reveal">Цифры, на которых держатся выводы</h2>
-    <p class="lead reveal">Эмпирические данные обоих кейсов — измеримые следы того, как решения владельца площадки превращаются в перепады политической видимости.</p>
+    <p class="lead reveal">Эмпирические данные обоих случаев — измеримые следы того, как решения владельца площадки превращаются в перепады политической видимости. Данные сгруппированы по площадкам: <b style="color:var(--accent2)">красным</b> отмечен случай X, <b style="color:var(--gold)">золотым</b> — случай Meta.</p>
 
     <div class="charts">
 
-      <!-- 1. Algorithmic amplification -->
+      <!-- ГРУППА X -->
+      <div class="statband x reveal"><span class="bp">Площадка X</span> · персоналистская модель · И. Маск</div>
+
+      <!-- 1. Алгоритмическое усиление -->
       <div class="card reveal">
-        <div class="ct">Кейс X · алгоритм</div>
+        <div class="ct">Случай X · алгоритм</div>
         <h3>Прирост охвата владельца против остальных</h3>
-        <svg viewBox="0 0 440 240" role="img" aria-label="Сравнение прироста просмотров и репостов">
-          <!-- axes baseline -->
+        <svg viewBox="0 0 440 240" role="img" aria-label="Сравнение прироста просмотров и распространения">
           <line x1="50" y1="200" x2="430" y2="200" stroke="#6f665d" stroke-width="1"/>
-          <!-- gridlines -->
           <g stroke="rgba(236,227,214,.10)" stroke-width="1">
             <line x1="50" y1="150" x2="430" y2="150"/><line x1="50" y1="100" x2="430" y2="100"/><line x1="50" y1="50" x2="430" y2="50"/>
           </g>
           <g font-family="IBM Plex Mono" font-size="9" fill="#6f665d" text-anchor="end">
             <text x="44" y="203">0</text><text x="44" y="153">80</text><text x="44" y="103">160</text><text x="44" y="53">240</text>
           </g>
-          <!-- group 1: views (scale: 240%->150px) -->
-          <!-- Musk views 138.27 -> h=138.27/240*150=86.4 ; others 56.93 -> 35.6 -->
           <rect x="80" y="113.6" width="46" height="86.4" fill="#d6452f" rx="2"/>
           <rect x="132" y="164.4" width="46" height="35.6" fill="#4a423b" rx="2"/>
           <text x="103" y="106" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#ece3d6">+138%</text>
           <text x="155" y="157" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#9d9389">+57%</text>
           <text x="129" y="222" text-anchor="middle" font-family="Manrope" font-size="11" fill="#9d9389">Просмотры</text>
-          <!-- group 2: reposts: Musk 237.94 -> 148.7 ; others 152.15 -> 95.1 -->
           <rect x="262" y="51.3" width="46" height="148.7" fill="#d6452f" rx="2"/>
           <rect x="314" y="104.9" width="46" height="95.1" fill="#4a423b" rx="2"/>
           <text x="285" y="44" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#ece3d6">+238%</text>
           <text x="337" y="97" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#9d9389">+152%</text>
-          <text x="311" y="222" text-anchor="middle" font-family="Manrope" font-size="11" fill="#9d9389">Репосты</text>
-          <!-- legend -->
+          <text x="311" y="222" text-anchor="middle" font-family="Manrope" font-size="11" fill="#9d9389">Распространение</text>
           <rect x="80" y="232" width="12" height="8" rx="2" fill="#d6452f"/><text x="97" y="239" font-family="IBM Plex Mono" font-size="9.5" fill="#9d9389">аккаунт владельца</text>
           <rect x="240" y="232" width="12" height="8" rx="2" fill="#4a423b"/><text x="257" y="239" font-family="IBM Plex Mono" font-size="9.5" fill="#9d9389">прочие аккаунты</text>
         </svg>
-        <p class="note">Метод разности разностей: дополнительный прирост аккаунта владельца — около <b style="color:var(--ink)">6,4 млн просмотров в день</b> сверх общего роста по выборке. Разрыв — около 13 июля 2024 года.</p>
-        <div class="src">Источник: Т. Грэм, М. Андреевич · цит. в работе</div>
+        <p class="note">Метод разности разностей: дополнительный прирост аккаунта владельца — около <b style="color:var(--ink)">6,4 млн просмотров в день</b> сверх общего роста по выборке. Структурный разрыв зафиксирован около 13 июля 2024 года.</p>
+        <div class="src">Источник: Грэм Т., Андреевич М. Анализ структурных разрывов (метод CUSUM, 56 184 публикации). QUT, 2024</div>
       </div>
 
-      <!-- 2. Viral posts -->
+      <!-- 2. Вирусные записи -->
       <div class="card reveal">
-        <div class="ct">Кейс X · вирусность</div>
-        <h3>Просмотры отдельных публикаций, июль 2024</h3>
-        <svg viewBox="0 0 440 240" role="img" aria-label="Просмотры публикаций в миллионах">
-          <!-- horizontal bars, scale max 224 -> 320px width from x=150 -->
+        <div class="ct">Случай X · вирусность</div>
+        <h3>Просмотры отдельных записей, июль 2024</h3>
+        <svg viewBox="0 0 440 240" role="img" aria-label="Просмотры записей в миллионах">
           <g font-family="Manrope" font-size="11" fill="#9d9389" text-anchor="end">
             <text x="142" y="38">Поддержка</text>
             <text x="142" y="86">«TRUMP VANCE»</text>
             <text x="142" y="134">Критика СМИ</text>
-            <text x="142" y="182">Эфир Spaces*</text>
+            <text x="142" y="182">Эфир в Spaces*</text>
           </g>
-          <!-- bars: value/224*280 -->
           <rect x="150" y="26" width="280" height="20" rx="3" fill="#d6452f"/>
           <rect x="150" y="74" width="102.5" height="20" rx="3" fill="#e8714f"/>
           <rect x="150" y="122" width="73.75" height="20" rx="3" fill="#e8714f"/>
@@ -531,36 +588,40 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
             <text x="229" y="137">59 млн</text>
             <text x="261" y="185">73–95 млн</text>
           </g>
-          <text x="150" y="222" font-family="IBM Plex Mono" font-size="9" fill="#6f665d">* совокупный охват записи и перепостов в первые дни</text>
+          <text x="150" y="222" font-family="IBM Plex Mono" font-size="9" fill="#6f665d">* совокупный охват записи и перепубликаций в первые дни</text>
         </svg>
-        <p class="note">Один пост поддержки — <b style="color:var(--ink)">2,21 млн отметок, 335 тыс. репостов</b>: один из самых вовлекающих в истории площадки.</p>
-        <div class="src">Источник: метрики площадки X · цит. в работе</div>
+        <p class="note">Одна запись с поддержкой — <b style="color:var(--ink)">2,21 млн отметок «нравится», 335 тыс. распространений</b>: одна из самых вовлекающих в истории площадки.</p>
+        <div class="src">Источник: метрики площадки X, июль 2024; приведено в: Грэм Т., Андреевич М., 2024</div>
       </div>
 
-      <!-- 3. Ad asymmetry 2016 -->
-      <div class="card span2 reveal">
-        <div class="ct">Кейс Meta · кампания 2016</div>
-        <h3>Асимметрия рекламного производства: Трамп против Клинтон</h3>
-        <div class="ratiorow" style="margin-top:24px">
-          <div class="rl"><span>Кампания Трампа</span><b>5 900 000 рекламных единиц</b></div>
-          <div class="rbar"><span style="width:100%;background:linear-gradient(90deg,#d6452f,#e8714f)"></span></div>
-        </div>
-        <div class="ratiorow">
-          <div class="rl"><span>Кампания Клинтон</span><b>≈ 66 000 единиц</b></div>
-          <div class="rbar"><span style="width:1.1%;background:#c9a24b;min-width:4px"></span></div>
-        </div>
-        <p class="note">Разрыв — примерно <b style="color:var(--ink)">в 89 раз</b>. Расходы на площадке за июнь–ноябрь 2016 — около 44 млн долларов; в одном задокументированном случае 328 тыс. долларов рекламы принесли 1,32 млн долларов пожертвований за день.</p>
-        <div class="src">Источник: данные кампаний · цит. в работе</div>
-      </div>
-
-      <!-- 4. Poll donut -->
+      <!-- НОВОЕ. Кому достался прирост -->
       <div class="card reveal">
-        <div class="ct">Кейс X · ноябрь 2022</div>
+        <div class="ct">Случай X · группы аккаунтов</div>
+        <h3>Кому достался дополнительный охват</h3>
+        <svg viewBox="0 0 440 180" role="img" aria-label="Прирост просмотров республиканских и демократических аккаунтов">
+          <g font-family="Manrope" font-size="12" fill="#9d9389" text-anchor="end">
+            <text x="150" y="55">Республиканские</text>
+            <text x="150" y="115">Демократические</text>
+          </g>
+          <rect x="160" y="38" width="252" height="26" rx="3" fill="#d6452f"/>
+          <rect x="160" y="98" width="7" height="26" rx="3" fill="#4a423b"/>
+          <g font-family="IBM Plex Mono" font-size="12">
+            <text x="172" y="56" fill="#14110f" font-weight="600">+952 тыс. в день</text>
+            <text x="176" y="116" fill="#9d9389">≈ 0 · незначимо</text>
+          </g>
+          <text x="160" y="158" font-family="IBM Plex Mono" font-size="9.5" fill="#6f665d">эффект значим только по просмотрам (p = 0,021)</text>
+        </svg>
+        <p class="note">Дополнительное усиление получили именно <b style="color:var(--ink)">республикански-ориентированные аккаунты</b> — отдельно от общего роста охватов и только по просмотрам. Это указывает на вмешательство на уровне ленты рекомендаций «Для вас».</p>
+        <div class="src">Источник: Грэм Т., Андреевич М. Анализ структурных разрывов. QUT, 2024</div>
+      </div>
+
+      <!-- 4. Опрос -->
+      <div class="card reveal">
+        <div class="ct">Случай X · ноябрь 2022</div>
         <h3>Опрос о восстановлении аккаунта</h3>
         <svg viewBox="0 0 440 200" role="img" aria-label="Результат опроса 51,8 процента за">
           <g transform="translate(110,100)">
             <circle r="68" fill="none" stroke="#3a332d" stroke-width="22"/>
-            <!-- 51.8% arc: circumference=2*pi*68=427.3 ; 51.8%->221.3 -->
             <circle r="68" fill="none" stroke="#d6452f" stroke-width="22"
               stroke-dasharray="221.3 427.3" stroke-dashoffset="0" transform="rotate(-90)"/>
             <text x="0" y="2" text-anchor="middle" font-family="Playfair Display" font-weight="900" font-size="34" fill="#f4ecdf">51,8%</text>
@@ -570,17 +631,36 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
             <rect x="0" y="-10" width="12" height="12" rx="2" fill="#d6452f"/>
             <text x="22" y="0" fill="#ece3d6">7,81 млн — «за»</text>
             <rect x="0" y="26" width="12" height="12" rx="2" fill="#3a332d"/>
-            <text x="22" y="36" fill="#9d9389">≈ 7,2 млн — «против»</text>
+            <text x="22" y="36" fill="#9d9389">&#8776; 7,2 млн — «против»</text>
             <text x="0" y="78" font-family="IBM Plex Mono" font-size="11" fill="#c9a24b">всего &gt; 15 000 000 голосов</text>
             <text x="0" y="100" font-family="IBM Plex Mono" font-size="10" fill="#6f665d">оформлено как «воля народа»</text>
           </g>
         </svg>
-        <div class="src">Источник: опрос на площадке X, 19 ноября 2022</div>
+        <div class="src">Источник: опрос на площадке X (Vox Populi), 19 ноября 2022</div>
       </div>
 
-      <!-- 5. Deplatforming effect -->
+      <!-- ГРУППА META -->
+      <div class="statband meta reveal"><span class="bp">Экосистема Meta</span> · институциональная модель · М. Цукерберг</div>
+
+      <!-- 3. Асимметрия рекламы -->
+      <div class="card span2 reveal">
+        <div class="ct">Случай Meta · кампания 2016</div>
+        <h3>Асимметрия рекламного производства: Трамп против Клинтон</h3>
+        <div class="ratiorow" style="margin-top:24px">
+          <div class="rl"><span>Кампания Трампа</span><b>5 900 000 рекламных единиц</b></div>
+          <div class="rbar"><span style="width:100%;background:linear-gradient(90deg,#d6452f,#e8714f)"></span></div>
+        </div>
+        <div class="ratiorow">
+          <div class="rl"><span>Кампания Клинтон</span><b>&#8776; 66 000 единиц</b></div>
+          <div class="rbar"><span style="width:1.1%;background:#c9a24b;min-width:4px"></span></div>
+        </div>
+        <p class="note">Разрыв — примерно <b style="color:var(--ink)">в 89 раз</b>. Расходы на площадке за июнь–ноябрь 2016 — около 44 млн долларов; в одном задокументированном случае 328 тыс. долларов рекламы принесли 1,32 млн долларов пожертвований за день.</p>
+        <div class="src">Источник: The New Yorker; The Atlantic, 2017 (операция «Project Alamo»)</div>
+      </div>
+
+      <!-- 5. Эффект отключения -->
       <div class="card reveal">
-        <div class="ct">Кейс Meta · эффект отключения</div>
+        <div class="ct">Случай Meta · эффект отключения</div>
         <h3>Дискуссия об «избирательном мошенничестве» за неделю</h3>
         <svg viewBox="0 0 440 200" role="img" aria-label="Падение объёма дискуссии на 73 процента">
           <line x1="40" y1="160" x2="420" y2="160" stroke="#6f665d" stroke-width="1"/>
@@ -590,37 +670,39 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
           <text x="315" y="120" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#ece3d6">27%</text>
           <text x="135" y="178" text-anchor="middle" font-family="Manrope" font-size="11" fill="#9d9389">до ограничений</text>
           <text x="315" y="178" text-anchor="middle" font-family="Manrope" font-size="11" fill="#9d9389">после</text>
-          <!-- arrow -->
           <path d="M195,90 Q235,70 262,118" fill="none" stroke="#e8714f" stroke-width="1.5" stroke-dasharray="3 3"/>
-          <text x="228" y="64" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-weight="700" font-size="22" fill="#e8714f">−73%</text>
+          <text x="228" y="64" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-weight="700" font-size="22" fill="#e8714f">&#8722;73%</text>
         </svg>
         <p class="note">Отключение одного аккаунта измеримо сжало целую тему публичной повестки.</p>
-        <div class="src">Источник: Zignal Labs / The Washington Post · цит. в работе</div>
+        <div class="src">Источник: Zignal Labs; The Washington Post, 2021</div>
       </div>
 
-      <!-- 6. Cambridge Analytica big number -->
+      <!-- 6. 87 млн профилей -->
       <div class="card bignum reveal">
-        <div class="ct">Кейс Meta · данные</div>
+        <div class="ct">Случай Meta · данные</div>
         <div class="huge">87<small>млн</small></div>
-        <div class="cap">профилей пользователей получены без их ведома и использованы для психографического таргетирования в кампании 2016 года и кампании референдума.</div>
-        <div class="src">Источник: расследование К. Кэдваллэдр, Э. Грэм-Харрисон · цит. в работе</div>
+        <div class="cap">профилей пользователей получены без их ведома и использованы для психографического нацеливания в кампании 2016 года и кампании референдума.</div>
+        <div class="src">Источник: Кэдваллэдр К., Грэм-Харрисон Э. The Guardian, 2018</div>
       </div>
 
-      <!-- 7. Fragmentation dot grid -->
+      <!-- ГРУППА КОНТЕКСТ -->
+      <div class="statband ctx reveal"><span class="bp">Общий контекст</span> · последствия и механизмы для обеих моделей</div>
+
+      <!-- 7. Фрагментация -->
       <div class="card reveal">
         <div class="ct">Контекст · после отключений</div>
         <h3>Лишь 6 из 100 взрослых регулярно читают новости на альтернативных площадках</h3>
         <div class="dotgrid" id="dg"></div>
-        <p class="note">«Уход» аудитории на альтернативные площадки оказался ограниченным: фрагментация не компенсирует потерю доступа к крупной площадке.</p>
-        <div class="src">Источник: опрос 10 188 совершеннолетних американцев · цит. в работе</div>
+        <p class="note">Переход аудитории на альтернативные площадки оказался ограниченным: фрагментация не возмещает потерю доступа к крупной площадке.</p>
+        <div class="src">Источник: Pew Research Center, 2022 (выборка — 10 188 совершеннолетних граждан США)</div>
       </div>
 
-      <!-- 8. Moral emotion mini -->
+      <!-- 8. Моральные эмоции -->
       <div class="card bignum reveal">
         <div class="ct">Механизм · моральные эмоции</div>
         <div class="huge">+20<small>%</small></div>
-        <div class="cap">к вероятности репоста даёт <b style="color:var(--ink)">каждое</b> дополнительное слово с моральной эмоциональной нагрузкой — топливо алгоритмического усиления.</div>
-        <div class="src">Источник: У. Брейди и соавт. · цит. в работе</div>
+        <div class="cap">к вероятности распространения даёт <b style="color:var(--ink)">каждое</b> дополнительное слово с моральной эмоциональной нагрузкой — горючее алгоритмического усиления.</div>
+        <div class="src">Источник: Брейди У. и соавт. PNAS, 2017</div>
       </div>
 
     </div>
@@ -708,6 +790,9 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
 
         <!-- callout for crash -->
         <text x="404" y="112" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-weight="700" font-size="15" fill="#e8714f">обрыв доступа</text>
+        <!-- callout for Musk takeover -->
+        <text x="636" y="104" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-weight="700" font-size="15" fill="#e8714f">приход Маска</text>
+        <text x="636" y="122" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-weight="700" font-size="15" fill="#e8714f">к управлению</text>
       </svg>
       <div class="legend">
         <span><i style="background:#c9a24b"></i>период Meta — конструирование, разрушение, узаконивание</span>
@@ -760,19 +845,19 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
       <div class="hyp reveal">
         <div class="code">H1 · следствие</div>
         <h4>Институциональная модель маскирует политическую волю магната за риторикой нейтральности.</h4>
-        <div class="status"><span class="tick">✓</span> подтверждена · кейс Meta</div>
+        <div class="status"><span class="tick">✓</span> подтверждена · случай Meta</div>
       </div>
       <div class="hyp reveal">
         <div class="code">H2 · следствие</div>
         <h4>Персоналистская модель прямо конвертирует капитал владельца в политический капитал поддерживаемого актора.</h4>
-        <div class="status"><span class="tick">✓</span> подтверждена · кейс X</div>
+        <div class="status"><span class="tick">✓</span> подтверждена · случай X</div>
       </div>
       <div class="hyp reveal">
         <div class="code">H3 · следствие</div>
         <h4>Существует структурный инвариант власти, общий для обеих моделей при всех их различиях.</h4>
         <div class="status"><span class="tick">✓</span> подтверждена · шесть совпадений</div>
       </div>
-      <div class="hyp uточ reveal">
+      <div class="hyp utoch reveal">
         <div class="code">H4 · следствие</div>
         <h4>Существующие правовые механизмы — необходимый, но недостаточный ответ на проблему.</h4>
         <div class="status"><span class="tick">✓</span> подтверждена с уточнением</div>
@@ -785,7 +870,53 @@ footer .rule{width:60px;height:1px;background:var(--line2);margin:34px auto}
   </div>
 </section>
 
-<!-- ===== THEORY ===== -->
+<!-- ===== STRUCTURAL INVARIANT ===== -->
+<section>
+  <div class="wrap">
+    <div class="sec-tag reveal">Где сходятся обе модели</div>
+    <h2 class="reveal">Структурный инвариант: шесть совпадений</h2>
+    <p class="lead reveal">Семь измерений матрицы показывают, чем X и Meta различаются. Но по шести признакам обе модели совпадают — независимо от риторики собственника и устройства корпорации. Эти совпадения и образуют единое ядро цифровой медиавласти.</p>
+    <div class="conv reveal">
+      <div class="conv-head">
+        <span class="l"><i style="background:var(--accent)"></i>персоналистская · X</span>
+        <span class="arrow">сходятся в &rarr;</span>
+        <span class="l"><i style="background:var(--gold)"></i>институциональная · Meta</span>
+      </div>
+      <div class="conv-grid">
+        <div class="conv-cell">
+          <div class="nn">01</div>
+          <h5>Власть переключения сетей в одной фигуре</h5>
+          <p>Один и тот же человек владеет инфраструктурой, перенастраивает её алгоритмы и соединяет технологическое поле с политическим. Разделения этих функций нет ни у Маска, ни у Цукерберга.</p>
+        </div>
+        <div class="conv-cell">
+          <div class="nn">02</div>
+          <h5>Приватизация публичной сферы</h5>
+          <p>Значимая часть политического разговора переходит под действие частных правил площадки. Пользовательское соглашение работает как квазиконституция — даже для глав государств.</p>
+        </div>
+        <div class="conv-cell">
+          <div class="nn">03</div>
+          <h5>Производство символического насилия</h5>
+          <p>Решения о видимости подаются как нейтральные и само собой разумеющиеся, скрывая стоящий за ними выбор собственника. Различается лишь риторика прикрытия.</p>
+        </div>
+        <div class="conv-cell">
+          <div class="nn">04</div>
+          <h5>Подрыв легально-рациональной законности</h5>
+          <p>Решения, влияющие на политический процесс, принимаются вне процедур и гарантий, свойственных правовому государству, — без демократического мандата.</p>
+        </div>
+        <div class="conv-cell">
+          <div class="nn">05</div>
+          <h5>Хрупкость цифровой харизмы</h5>
+          <p>Авторитет, выстроенный на чужой площадке, остаётся отзываемым: одно решение собственника способно его обрушить. Это подтверждает прогноз З. Тюфекчи.</p>
+        </div>
+        <div class="conv-cell">
+          <div class="nn">06</div>
+          <h5>Видимость как условие субъектности</h5>
+          <p>Без алгоритмической видимости политик фактически перестаёт существовать в публичном пространстве. Видимостью же распоряжается владелец инфраструктуры.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 <section>
   <div class="wrap">
     <div class="sec-tag reveal">Теоретическая опора</div>
