@@ -3,30 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Роль медиамагнатов в конструировании политического авторитета в условиях цифровой медиасреды — обзор магистерской диссертации. Сравнение моделей X (Маск) и Meta (Цукерберг).">
+<meta name="theme-color" content="#333333">
 <title>Медиамагнаты и политический авторитет — обзор исследования</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap&subset=cyrillic,cyrillic-ext,latin" rel="stylesheet">
 <style>
-/* ============================================================
-   ВЕБ-БРУТАЛИЗМ · палитра: белый / угольный #333 / синий #004F9F
-   Шрифт: только IBM Plex Mono
-   ============================================================ */
+/* ================================================================
+   ВЕБ-БРУТАЛИЗМ · ПАЛИТРА: белый / угольный #333333 / синий #004F9F
+   Шрифт: только IBM Plex Mono.
+
+   Подход: MOBILE FIRST.
+   Базовые стили написаны для узких экранов (~360px),
+   далее два «расширяющих» брейкпоинта:
+     @media (min-width: 640px)  — планшеты и крупные телефоны
+     @media (min-width: 980px)  — десктоп
+   Адаптивная типографика и отступы построены на clamp(),
+   поэтому промежуточные размеры экранов масштабируются плавно,
+   без «ступенек».
+   ================================================================ */
 :root{
   --bg:#FFFFFF;
-  --bg2:#FFFFFF;
-  --bg3:#FFFFFF;
-  --ink:#333333;
-  --paper:#333333;
-  --muted:#333333;
-  --faint:#333333;
-  --accent:#333333;   /* X · персоналистская */
-  --accent2:#333333;
-  --gold:#004F9F;      /* Meta · институциональная */
-  --line:#333333;
-  --line2:#333333;
-  --shadow:8px 8px 0 #333333;
-  --shadow-blue:8px 8px 0 #004F9F;
+  --ink:#333333;          /* угольный — X, персоналистская модель */
+  --gold:#004F9F;         /* синий  — Meta, институциональная модель */
+
+  /* Жёсткая «печатная» тень. Через clamp() она автоматически
+     уменьшается на телефонах (5px) и растёт до 8px на десктопе,
+     чтобы карточки не «съедали» драгоценную ширину экрана. */
+  --shz:clamp(5px, 1.2vw, 8px);
+  --shadow:var(--shz) var(--shz) 0 var(--ink);
+  --shadow-blue:var(--shz) var(--shz) 0 var(--gold);
+
+  /* Единая система отступов: один источник правды для всех секций. */
+  --space-section:clamp(56px, 11vw, 96px);   /* вертикальный ритм секций   */
+  --space-card:clamp(18px, 3.5vw, 28px);     /* внутренние поля карточек   */
+  --space-gutter:clamp(16px, 4vw, 24px);     /* боковые поля контейнера    */
+
+  /* Высота фиксированной навигации — нужна для scroll-margin якорей. */
+  --nav-h:48px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -37,8 +52,10 @@ body{
   font-weight:400;
   line-height:1.5;
   overflow-x:hidden;
+  /* Без этого iOS «раздувает» шрифт в горизонтальной ориентации. */
+  -webkit-text-size-adjust:100%;
 }
-/* видимая сетка-миллиметровка как у технического чертежа */
+/* Видимая миллиметровка технического чертежа на подложке. */
 body::before{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:
@@ -47,13 +64,67 @@ body::before{
   background-size:32px 32px;
 }
 ::selection{background:#333;color:#fff}
-.mono{font-family:'IBM Plex Mono',monospace}
-.serif{font-family:'IBM Plex Mono',monospace}
 img{image-rendering:auto}
 
-.wrap{max-width:1240px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+/* Доступность: видимый фокус для навигации с клавиатуры. */
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
-/* ---------- ПЛАВНОЕ ПОЯВЛЕНИЕ ---------- */
+.wrap{max-width:1240px;margin:0 auto;padding:0 var(--space-gutter);position:relative;z-index:2}
+
+/* Все секции получают зазор сверху при переходе по якорю,
+   чтобы заголовок не прятался под фиксированной навигацией. */
+section,header{scroll-margin-top:calc(var(--nav-h) + 12px)}
+
+/* ================================================================
+   ПРОГРЕСС ЧТЕНИЯ — тонкая синяя полоса поверх навигации.
+   Ширина управляется из JS через CSS-переменную --p (0…1):
+   transform масштабируется GPU и не вызывает перерасчёт макета.
+   ================================================================ */
+.progress{
+  position:fixed;top:0;left:0;right:0;height:4px;z-index:60;
+  background:transparent;pointer-events:none;
+}
+.progress i{
+  display:block;height:100%;background:var(--gold);
+  transform-origin:0 50%;
+  transform:scaleX(var(--p,0));
+}
+
+/* ================================================================
+   НАВИГАЦИЯ — фиксированная угольная лента с якорями.
+   На телефоне прокручивается горизонтально по инерции;
+   каждая ссылка — полноценная сенсорная цель (высота 48px).
+   ================================================================ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  background:#333;border-bottom:3px solid #333;
+  display:flex;align-items:stretch;
+  height:var(--nav-h);
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;     /* инерционный скролл на iOS */
+  scrollbar-width:none;                  /* прячем полосу прокрутки   */
+}
+.nav::-webkit-scrollbar{display:none}
+.nav a{
+  flex:none;display:flex;align-items:center;
+  color:#fff;text-decoration:none;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+  padding:0 16px;border-right:1px solid rgba(255,255,255,.25);
+  min-height:44px;                      /* рекомендованный минимум touch-цели */
+}
+.nav a.brand{background:var(--gold);font-weight:700;padding:0 14px}
+.nav a.act{background:#fff;color:#333}  /* активный раздел — scrollspy из JS */
+/* Эффекты наведения включаем только на устройствах с курсором,
+   чтобы на сенсорных экранах не «залипали» hover-состояния. */
+@media (hover:hover){
+  .nav a:hover{background:var(--gold);color:#fff}
+  .nav a.act:hover{background:#fff;color:#333}
+}
+
+/* ================================================================
+   ПЛАВНОЕ ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ (reveal)
+   Элемент невидим до пересечения вьюпорта; класс .in вешает JS.
+   ================================================================ */
 .reveal{opacity:0}
 .reveal.in{animation:fade-in .6s cubic-bezier(.22,.61,.36,1) forwards}
 @keyframes fade-in{
@@ -61,335 +132,737 @@ img{image-rendering:auto}
   to  {opacity:1;transform:none}
 }
 
-/* ---------- БЕГУЩАЯ СТРОКА ---------- */
+/* ================================================================
+   БЕГУЩАЯ СТРОКА
+   Дорожка содержит ДВЕ копии контента, поэтому сдвиг на −50%
+   даёт бесшовную петлю. На устройствах с курсором лента
+   останавливается при наведении — текст можно прочитать.
+   ================================================================ */
 .marquee{
   border-top:3px solid #333;border-bottom:3px solid #333;
   background:#333;color:#fff;overflow:hidden;white-space:nowrap;
-  font-weight:600;text-transform:uppercase;letter-spacing:.18em;font-size:13px;
+  font-weight:600;text-transform:uppercase;letter-spacing:.18em;
+  font-size:clamp(11px,1.6vw,13px);
 }
-.marquee.blue{background:#004F9F}
-.marquee .track{display:inline-block;padding:11px 0;animation:marq 22s linear infinite;will-change:transform}
+.marquee.blue{background:var(--gold)}
+.marquee .track{display:inline-block;padding:11px 0;animation:marq 30s linear infinite;will-change:transform}
 .marquee.rev .track{animation-direction:reverse}
 .marquee span{padding:0 26px}
 .marquee span::after{content:"■";margin-left:26px;font-size:9px;vertical-align:middle}
 @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (hover:hover){
+  .marquee:hover .track{animation-play-state:paused}
+}
 
-/* ============ HERO ============ */
+/* ================================================================
+   HERO
+   ================================================================ */
 .hero{
-  min-height:96vh;display:flex;flex-direction:column;justify-content:center;
-  position:relative;border-bottom:3px solid #333;padding:40px 0;
+  min-height:92svh;            /* svh: честная высота на мобильных браузерах */
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;border-bottom:3px solid #333;
+  padding:calc(var(--nav-h) + 40px) 0 96px;  /* снизу — место для «пролистать» */
 }
 .hero-grid{
-  position:absolute;inset:0;z-index:0;opacity:1;
+  position:absolute;inset:0;z-index:0;
   background-image:linear-gradient(#333 1px,transparent 1px),linear-gradient(90deg,#333 1px,transparent 1px);
-  background-size:120px 120px;opacity:.07;
+  background-size:clamp(72px,10vw,120px) clamp(72px,10vw,120px);
+  opacity:.07;
 }
 .kicker{
-  font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:#fff;
+  font-size:clamp(10px,1.6vw,13px);letter-spacing:.24em;text-transform:uppercase;color:#fff;
   background:#333;display:inline-flex;align-items:center;gap:12px;
-  padding:9px 16px;margin-bottom:34px;font-weight:600;align-self:flex-start;
-  border:3px solid #333;
+  padding:9px 14px;margin-bottom:clamp(22px,4vw,34px);font-weight:600;align-self:flex-start;
+  border:3px solid #333;max-width:100%;
 }
 .kicker::before{content:"▶";font-size:10px}
 .hero h1{
-  font-family:'IBM Plex Mono',monospace;font-weight:700;
-  font-size:clamp(3rem,11vw,9rem);line-height:.92;
+  font-weight:700;
+  /* clamp: от 2.5rem на узком телефоне до 9rem на десктопе. */
+  font-size:clamp(2.5rem,11vw,9rem);line-height:.95;
   letter-spacing:-.04em;text-transform:uppercase;color:#333;
   max-width:18ch;margin-left:-.04em;
+  overflow-wrap:break-word;    /* страховка от вылета длинных слов на 320px */
 }
-.hero h1 em{font-style:normal;background:#004F9F;color:#fff;padding:0 .12em;
+.hero h1 em{font-style:normal;background:var(--gold);color:#fff;padding:0 .12em;
   box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .hero-sub{
-  margin-top:32px;max-width:62ch;font-size:clamp(.95rem,1.4vw,1.12rem);
-  color:#333;font-weight:400;border-left:6px solid #333;padding-left:18px;
+  margin-top:clamp(20px,4vw,32px);max-width:62ch;
+  font-size:clamp(.9rem,1.4vw,1.12rem);
+  color:#333;border-left:6px solid #333;padding-left:clamp(12px,2.5vw,18px);
 }
 .hero-meta{
-  margin-top:40px;display:flex;flex-wrap:wrap;gap:0;
-  font-size:12.5px;color:#333;letter-spacing:.04em;border:3px solid #333;width:fit-content;
+  margin-top:clamp(26px,5vw,40px);display:flex;flex-direction:column;
+  font-size:clamp(11px,1.5vw,12.5px);color:#333;letter-spacing:.04em;
+  border:3px solid #333;width:100%;
 }
-.hero-meta span{padding:12px 18px;border-right:3px solid #333;text-transform:uppercase}
-.hero-meta span:last-child{border-right:none}
+.hero-meta span{padding:12px 16px;border-bottom:3px solid #333;text-transform:uppercase}
+.hero-meta span:last-child{border-bottom:none}
 .hero-meta b{font-weight:700}
 .scrolldown{
-  position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+  position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
   font-size:11px;letter-spacing:.24em;color:#333;text-transform:uppercase;text-align:center;
 }
 .scrolldown span{display:block;font-size:20px;margin-top:4px;animation:bob 1s steps(2) infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
 
-/* ============ FACTS ============ */
+/* ================================================================
+   FACTS — счётная лента под hero.
+   Mobile: 2 колонки → 640px: 3 → 980px: 6.
+   ================================================================ */
 .facts{border-bottom:3px solid #333;background:#fff}
-.facts-inner{display:grid;grid-template-columns:repeat(6,1fr)}
-.fact{padding:34px 18px;border-right:3px solid #333;text-align:center;transition:none}
-.fact:last-child{border-right:none}
-.fact:hover{background:#333;color:#fff}
-.fact:hover .n{color:#fff}
-.fact:hover .l{color:#fff}
+.facts-inner{display:grid;grid-template-columns:repeat(2,1fr)}
+.fact{padding:clamp(22px,4vw,34px) 14px;border-right:3px solid #333;border-bottom:3px solid #333;text-align:center}
+.fact:nth-child(2n){border-right:none}
+.fact:nth-last-child(-n+2){border-bottom:none}
 .fact .n{
-  font-family:'IBM Plex Mono',monospace;font-weight:700;
-  font-size:clamp(2.4rem,5vw,4.4rem);color:#333;line-height:.9;letter-spacing:-.04em;
+  font-weight:700;
+  font-size:clamp(2rem,6vw,4.4rem);color:#333;line-height:.9;letter-spacing:-.04em;
 }
-.fact .l{margin-top:12px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#333;font-weight:500}
+.fact .l{margin-top:12px;font-size:clamp(9.5px,1.4vw,10.5px);letter-spacing:.1em;text-transform:uppercase;color:#333;font-weight:500}
+@media (hover:hover){
+  .fact:hover{background:#333;color:#fff}
+  .fact:hover .n,.fact:hover .l{color:#fff}
+}
 
-/* ============ SECTION ============ */
-section{padding:96px 0;border-bottom:3px solid #333;position:relative}
+/* ================================================================
+   ОБЩИЕ ПРАВИЛА СЕКЦИЙ
+   ================================================================ */
+section{padding:var(--space-section) 0;border-bottom:3px solid #333;position:relative}
 .sec-tag{
-  font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#fff;background:#333;
-  display:inline-flex;align-items:center;gap:11px;padding:8px 14px;margin-bottom:26px;font-weight:600;
+  font-size:clamp(10px,1.5vw,12px);letter-spacing:.22em;text-transform:uppercase;color:#fff;background:#333;
+  display:inline-flex;align-items:center;gap:11px;padding:8px 14px;margin-bottom:clamp(18px,3vw,26px);font-weight:600;
 }
 .sec-tag::before{content:"//"}
 h2{
-  font-family:'IBM Plex Mono',monospace;font-weight:700;
-  font-size:clamp(2rem,5.4vw,4.2rem);line-height:.96;color:#333;
+  font-weight:700;
+  font-size:clamp(1.7rem,5.4vw,4.2rem);line-height:1.02;color:#333;
   letter-spacing:-.035em;max-width:22ch;text-transform:uppercase;
+  overflow-wrap:break-word;
 }
-.lead{margin-top:26px;max-width:68ch;color:#333;font-size:1rem;font-weight:400;
-  border-left:6px solid #333;padding-left:18px}
+.lead{margin-top:clamp(18px,3vw,26px);max-width:68ch;color:#333;
+  font-size:clamp(.9rem,1.3vw,1rem);
+  border-left:6px solid #333;padding-left:clamp(12px,2.5vw,18px)}
 
-/* ============ FLOW ============ */
-.flow{margin-top:48px;border:3px solid #333;padding:22px;box-shadow:var(--shadow);background:#fff}
+/* ================================================================
+   FLOW — причинная цепочка исследования.
+   Две версии SVG: горизонтальная (десктоп) и вертикальная (мобайл).
+   Переключение чисто на CSS — без JS и без масштабирования текста
+   до нечитаемых размеров.
+   ================================================================ */
+.flow{margin-top:clamp(32px,6vw,48px);border:3px solid #333;padding:clamp(14px,3vw,22px);box-shadow:var(--shadow);background:#fff}
 .flow svg{width:100%;height:auto;display:block}
+.flow .v{display:block}      /* вертикальная схема — по умолчанию (mobile first) */
+.flow .h{display:none}       /* горизонтальная появится на десктопе */
 
-/* ============ MODEL KEY (X / META) ============ */
-.keysplit{margin-top:44px;display:grid;grid-template-columns:1fr 1fr;gap:0;border:3px solid #333}
-.keyside{padding:26px 26px;display:flex;flex-direction:column;gap:7px;transition:none}
-.keyside.x{background:#333;color:#fff;border-right:3px solid #333}            /* X — угольная, без смены при наведении */
-.keyside.meta{background:#004F9F;color:#fff}                                   /* Meta — синяя по умолчанию */
+/* ================================================================
+   НОВЫЙ БЛОК · «ТРИ УРОВНЯ ОДНОЙ МАШИНЫ»
+   Слоистая концептуальная схема главы 2: структурный → дискурсивный
+   → технологический уровень → результат. Сделана на чистом CSS:
+   на любом экране читается сверху вниз, стрелки — псевдоэлементы.
+   ================================================================ */
+.levels{margin-top:clamp(32px,6vw,48px);display:flex;flex-direction:column}
+.level{
+  border:3px solid #333;background:#fff;box-shadow:var(--shadow);
+  display:grid;grid-template-columns:1fr;       /* mobile: метка над текстом */
+}
+.level + .level,.levels .result{margin-top:46px;position:relative}
+/* Стрелка-перемычка между уровнями: вертикальная линия + наконечник. */
+.level + .level::before,.levels .result::before{
+  content:"▼";position:absolute;top:-37px;left:50%;transform:translateX(-50%);
+  font-size:14px;color:#333;line-height:1;
+}
+.level + .level::after,.levels .result::after{
+  content:"";position:absolute;top:-46px;left:50%;width:3px;height:24px;background:#333;transform:translateX(-50%);
+}
+.level .tag{
+  background:#333;color:#fff;padding:14px 18px;
+  display:flex;align-items:center;gap:12px;
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  border-bottom:3px solid #333;
+}
+.level .tag .no{font-size:1.5rem;letter-spacing:-.03em;line-height:1}
+.level .body{padding:var(--space-card)}
+.level h3{font-weight:700;font-size:clamp(1.05rem,2vw,1.3rem);text-transform:uppercase;letter-spacing:-.02em;line-height:1.15}
+.level p{margin-top:10px;font-size:clamp(.86rem,1.2vw,.93rem);line-height:1.55}
+/* «Фишки»-механизмы внутри уровня — рамочные ярлыки, переносятся сами. */
+.chips{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+.chips i{
+  font-style:normal;border:2px solid #333;padding:7px 10px;
+  font-size:clamp(10px,1.3vw,11px);letter-spacing:.06em;text-transform:uppercase;font-weight:600;
+  background:#fff;
+}
+.chips i.b{border-color:var(--gold);color:var(--gold)}
+.levels .result{
+  border:3px solid var(--gold);background:var(--gold);color:#fff;
+  box-shadow:var(--shadow-blue);padding:var(--space-card);text-align:center;
+}
+.levels .result::before{color:var(--gold)}
+.levels .result::after{background:var(--gold)}
+.levels .result .rt{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;opacity:.85}
+.levels .result h3{margin-top:8px;font-weight:700;font-size:clamp(1.1rem,2.6vw,1.6rem);text-transform:uppercase;letter-spacing:-.02em}
+
+/* ================================================================
+   КЛЮЧ К МОДЕЛЯМ (X / META)
+   ================================================================ */
+.keysplit{margin-top:clamp(30px,5vw,44px);display:grid;grid-template-columns:1fr;border:3px solid #333}
+.keyside{padding:var(--space-card);display:flex;flex-direction:column;gap:7px}
+.keyside.x{background:#333;color:#fff;border-bottom:3px solid #333}
+.keyside.meta{background:var(--gold);color:#fff}
 .keyside .kp{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600}
-.keyside.x .kp{color:#fff}
-.keyside.meta .kp{color:#fff}
-.keyside .kh{font-weight:700;font-size:1.3rem;text-transform:uppercase;letter-spacing:-.02em}
-.keyside .kd{font-weight:400;font-size:.9rem;line-height:1.5}
+.keyside .kh{font-weight:700;font-size:clamp(1.1rem,2vw,1.3rem);text-transform:uppercase;letter-spacing:-.02em}
+.keyside .kd{font-size:clamp(.84rem,1.2vw,.9rem);line-height:1.5}
 
-/* ============ MODELS ============ */
-.models{margin-top:52px;display:grid;grid-template-columns:1fr 1fr;gap:28px}
+/* ================================================================
+   КАРТОЧКИ МОДЕЛЕЙ
+   ================================================================ */
+.models{margin-top:clamp(34px,6vw,52px);display:grid;grid-template-columns:1fr;gap:clamp(20px,4vw,28px)}
 .model{border:3px solid #333;overflow:hidden;background:#fff;display:flex;flex-direction:column;
   box-shadow:var(--shadow);transition:transform .12s steps(2),box-shadow .12s steps(2)}
-.model:hover{transform:translate(-4px,-4px);box-shadow:12px 12px 0 #333}
-.model .photo{position:relative;height:300px;overflow:hidden;filter:grayscale(1) contrast(1.15);
-  border-bottom:3px solid #333}
+@media (hover:hover){
+  .model:hover{transform:translate(-4px,-4px);box-shadow:12px 12px 0 #333}
+}
+.model .photo{position:relative;height:clamp(220px,40vw,300px);overflow:hidden;
+  filter:grayscale(1) contrast(1.15);border-bottom:3px solid #333}
 .model .photo img{width:100%;height:100%;object-fit:cover;object-position:center 22%}
 .model.m1 .photo{filter:grayscale(1) contrast(1.15) invert(.06)}
 .model .badge{
-  position:absolute;top:0;left:0;z-index:2;font-size:11px;letter-spacing:.1em;
+  position:absolute;top:0;left:0;z-index:2;font-size:clamp(10px,1.4vw,11px);letter-spacing:.1em;
   padding:9px 14px;text-transform:uppercase;font-weight:600;border-right:3px solid #333;border-bottom:3px solid #333;
 }
-.m1 .badge{background:#333;color:#fff}        /* X */
-.m2 .badge{background:#004F9F;color:#fff}     /* Meta */
-.model .body{padding:26px 28px 30px;flex:1;display:flex;flex-direction:column}
-.m1 .body{background:#333;color:#fff}          /* X — инверсия */
-.model h3{font-weight:700;font-size:1.45rem;line-height:1.05;text-transform:uppercase;letter-spacing:-.02em}
-.m2 h3{color:#004F9F}
-.model .who{margin-top:8px;font-size:12px;letter-spacing:.05em;text-transform:uppercase}
-.m1 .who{color:#fff}
-.m2 .who{color:#333}
-.model p{margin-top:16px;font-size:.93rem;font-weight:400;line-height:1.55}
+.m1 .badge{background:#333;color:#fff}
+.m2 .badge{background:var(--gold);color:#fff}
+.model .body{padding:var(--space-card);flex:1;display:flex;flex-direction:column}
+.m1 .body{background:#333;color:#fff}
+.model h3{font-weight:700;font-size:clamp(1.15rem,2.4vw,1.45rem);line-height:1.08;text-transform:uppercase;letter-spacing:-.02em}
+.m2 h3{color:var(--gold)}
+.model .who{margin-top:8px;font-size:clamp(11px,1.5vw,12px);letter-spacing:.05em;text-transform:uppercase}
+.model p{margin-top:16px;font-size:clamp(.86rem,1.3vw,.93rem);line-height:1.55}
 .model ul{margin-top:18px;list-style:none;display:flex;flex-direction:column;gap:10px}
-.model li{display:flex;gap:11px;font-size:.9rem}
+.model li{display:flex;gap:11px;font-size:clamp(.84rem,1.3vw,.9rem)}
 .model li::before{content:"►";font-weight:700;flex:none;font-size:10px;margin-top:3px}
-.m2 li::before{color:#004F9F}
+.m2 li::before{color:var(--gold)}
 
-/* ============ MATRIX ============ */
-.matrix{margin-top:48px;border:3px solid #333;overflow:hidden;box-shadow:var(--shadow);background:#fff}
-.matrix table{width:100%;border-collapse:collapse;font-size:.9rem}
+/* ================================================================
+   МАТРИЦА СРАВНЕНИЯ
+   Mobile: горизонтальная прокрутка + липкая первая колонка,
+   чтобы «измерение» всегда было на экране, пока листаешь ячейки.
+   ================================================================ */
+.matrix{margin-top:clamp(32px,6vw,48px);border:3px solid #333;box-shadow:var(--shadow);background:#fff;
+  overflow-x:auto;-webkit-overflow-scrolling:touch}
+.matrix table{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.3vw,.9rem);min-width:680px}
 .matrix th{
-  text-align:left;padding:16px 18px;background:#fff;font-size:11px;letter-spacing:.08em;
+  text-align:left;padding:14px 16px;background:#fff;font-size:11px;letter-spacing:.08em;
   text-transform:uppercase;font-weight:700;border-bottom:3px solid #333;border-right:3px solid #333;
 }
 .matrix th:last-child{border-right:none}
-.matrix th.dim{color:#333}
-.matrix th.x{background:#333;color:#fff}        /* X — инверсия */
-.matrix th.m{background:#004F9F;color:#fff}     /* Meta — синий */
-.matrix td{padding:16px 18px;border-bottom:1px solid #333;border-right:3px solid #333;
-  vertical-align:top;color:#333;font-weight:400;line-height:1.5}
+.matrix th.x{background:#333;color:#fff}
+.matrix th.m{background:var(--gold);color:#fff}
+.matrix td{padding:14px 16px;border-bottom:1px solid #333;border-right:3px solid #333;
+  vertical-align:top;color:#333;line-height:1.5}
 .matrix td:last-child{border-right:none}
 .matrix tr:last-child td{border-bottom:none}
-.matrix tr:hover td{background:#333;color:#fff}
-.matrix tr:hover .num{color:#fff}
-.matrix .dimcell{color:#333;font-weight:700;width:24%;text-transform:uppercase;font-size:.84rem}
+/* Липкая колонка измерений: остаётся видимой при горизонтальном скролле. */
+.matrix .dimcell,.matrix th.dim{position:sticky;left:0;background:#fff;z-index:1}
+.matrix .dimcell{color:#333;font-weight:700;min-width:170px;text-transform:uppercase;font-size:clamp(.76rem,1.2vw,.84rem)}
 .matrix .num{font-weight:700;color:#333;font-size:11px;margin-right:9px}
+@media (hover:hover){
+  .matrix tr:hover td{background:#333;color:#fff}
+  .matrix tr:hover .num{color:#fff}
+}
+/* Подсказка «таблицу можно листать» — видна только до min-width:980px
+   и исчезает после первого касания скролла (JS). */
+.scrollhint{
+  margin-top:10px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:#333;display:flex;align-items:center;gap:10px;
+  transition:opacity .4s;
+}
+.scrollhint::before,.scrollhint::after{content:"";flex:1;height:2px;background:#333}
+.scrollhint.off{opacity:0}
 
-/* ============ STATS / CHARTS ============ */
-.charts{margin-top:48px;display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+/* ================================================================
+   СТАТИСТИКА · карточки графиков
+   Mobile: одна колонка → 980px: две.
+   ================================================================ */
+.charts{margin-top:clamp(32px,6vw,48px);display:grid;grid-template-columns:1fr;gap:clamp(18px,3vw,24px)}
 .card{
-  border:3px solid #333;padding:24px 26px 26px;background:#fff;position:relative;
+  border:3px solid #333;padding:var(--space-card);background:#fff;position:relative;
   display:flex;flex-direction:column;box-shadow:var(--shadow);
   transition:transform .12s steps(2),box-shadow .12s steps(2),border-color .1s steps(1);
 }
-.card:hover{transform:translate(-5px,-5px);box-shadow:12px 12px 0 #004F9F;border-color:#004F9F}
-.card.seg-x:hover{box-shadow:12px 12px 0 #333;border-color:#333}        /* X — без синего */
-.card.seg-meta:hover{box-shadow:12px 12px 0 #004F9F;border-color:#004F9F} /* Meta — синий */
-.card.span2{grid-column:span 2}
+@media (hover:hover){
+  .card:hover{transform:translate(-5px,-5px);box-shadow:12px 12px 0 var(--gold);border-color:var(--gold)}
+  .card.seg-x:hover{box-shadow:12px 12px 0 #333;border-color:#333}
+  .card.seg-meta:hover{box-shadow:12px 12px 0 var(--gold);border-color:var(--gold)}
+}
 .card .ct{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:#333;
   display:inline-flex;align-self:flex-start;align-items:center;gap:9px;padding:6px 11px;font-weight:600}
-.card h3{font-weight:700;font-size:1.18rem;margin-top:14px;line-height:1.12;text-transform:uppercase;letter-spacing:-.02em}
-.card .src{margin-top:auto;padding-top:14px;font-size:10px;letter-spacing:.04em;color:#333;
-  border-top:3px solid #333;margin-top:18px;text-transform:uppercase}
+.card h3{font-weight:700;font-size:clamp(1rem,1.8vw,1.18rem);margin-top:14px;line-height:1.15;text-transform:uppercase;letter-spacing:-.02em}
+.card .src{padding-top:14px;font-size:10px;letter-spacing:.04em;color:#333;
+  border-top:3px solid #333;margin-top:auto;padding-top:14px;text-transform:uppercase}
+.card .src{margin-top:18px}
 .card svg{width:100%;height:auto;display:block;margin-top:16px;overflow:visible;
   border:2px solid #333;background:#fff;padding:10px}
-.card .note{margin-top:14px;color:#333;font-size:.88rem;font-weight:400;line-height:1.45}
+.card .note{margin-top:14px;margin-bottom:4px;color:#333;font-size:clamp(.82rem,1.3vw,.88rem);line-height:1.5}
 
-/* большие числа */
+/* --- Анимация роста столбцов SVG при появлении карточки ---------
+   Прямоугольникам диаграмм присвоены классы .bar (вертикальный
+   рост) и .barh (горизонтальный). transform-box:fill-box позволяет
+   масштабировать каждый <rect> относительно собственного низа /
+   левого края. Триггер — класс .in, который reveal-наблюдатель
+   вешает на карточку. */
+.card svg .bar{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);
+  transition:transform .8s cubic-bezier(.22,.61,.36,1) .15s}
+.card svg .barh{transform-box:fill-box;transform-origin:0 50%;transform:scaleX(0);
+  transition:transform .8s cubic-bezier(.22,.61,.36,1) .15s}
+.card.in svg .bar{transform:scaleY(1)}
+.card.in svg .barh{transform:scaleX(1)}
+/* Кольцевая диаграмма опроса: дуга «рисуется» сдвигом штриха. */
+.card svg .arc{stroke-dashoffset:221.3;transition:stroke-dashoffset 1s cubic-bezier(.22,.61,.36,1) .2s}
+.card.in svg .arc{stroke-dashoffset:0}
+
+/* Большие числа */
 .bignum{justify-content:flex-start}
-.bignum .huge{font-weight:700;font-size:clamp(3.4rem,9vw,6rem);line-height:.85;color:#004F9F;letter-spacing:-.05em}
+.bignum .huge{font-weight:700;font-size:clamp(3rem,9vw,6rem);line-height:.85;color:var(--gold);letter-spacing:-.05em;margin-top:18px}
 .bignum .huge small{font-size:.36em;color:#333;font-weight:700;margin-left:6px}
-.bignum .cap{margin-top:16px;color:#333;font-size:.96rem;font-weight:400;max-width:40ch;line-height:1.45}
+.bignum .huge.dark{color:#333}
+.bignum .cap{margin-top:16px;color:#333;font-size:clamp(.86rem,1.3vw,.96rem);max-width:42ch;line-height:1.45;margin-bottom:4px}
 
-/* точечная сетка */
+/* Точечная сетка 10×10 (Pew). Заполненные точки «зажигаются»
+   с задержкой — лесенку задержек проставляет JS. */
 .dotgrid{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;margin-top:18px;border:2px solid #333;padding:8px;background:#fff}
 .dotgrid i{aspect-ratio:1;background:#fff;border:1px solid #333}
-.dotgrid i.on{background:#333}
+.dotgrid i.on{background:#fff;transition:background .35s steps(2)}
+.card.in .dotgrid i.on{background:#333}
 
-/* полосы-отношения */
+/* Полосы-отношения (реклама Трамп/Клинтон). Заполнение анимируется
+   через scaleX — ширина задана инлайном, масштаб даёт «вырастание». */
 .ratiorow{margin-top:18px}
-.ratiorow .rl{display:flex;justify-content:space-between;font-size:.84rem;color:#333;margin-bottom:6px;text-transform:uppercase}
-.ratiorow .rl b{color:#333;font-weight:700}
+.ratiorow .rl{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  font-size:clamp(.76rem,1.2vw,.84rem);color:#333;margin-bottom:6px;text-transform:uppercase}
+.ratiorow .rl b{font-weight:700}
 .rbar{height:22px;background:#fff;border:3px solid #333;overflow:hidden}
-.rbar span{display:block;height:100%}
+.rbar span{display:block;height:100%;transform:scaleX(0);transform-origin:0 50%;
+  transition:transform .9s cubic-bezier(.22,.61,.36,1) .15s}
+.card.in .rbar span{transform:scaleX(1)}
 
-/* ============ STAT GROUP BANDS ============ */
+/* Ленты-разделители групп статистики */
 .statband{grid-column:1/-1;display:flex;align-items:center;margin-top:16px;overflow:hidden;
-  border:3px solid #333;background:#333;color:#fff;font-size:13px;letter-spacing:.12em;
+  border:3px solid #333;background:#333;color:#fff;font-size:clamp(11px,1.5vw,13px);letter-spacing:.12em;
   text-transform:uppercase;font-weight:600;padding-right:16px}
 .statband:first-child{margin-top:0}
 .statband::before{content:"\25A0";align-self:stretch;display:flex;align-items:center;
   padding:12px 15px;border-right:3px solid currentColor;font-size:11px}
 .statband .bp{font-weight:700;padding:12px 0 12px 14px;margin-right:6px}
 .statband.x{background:#333;color:#fff;border-color:#333}
-.statband.meta{background:#004F9F;color:#fff;border-color:#004F9F}
+.statband.meta{background:var(--gold);color:#fff;border-color:var(--gold)}
 .statband.ctx{background:#fff;color:#333;border-color:#333}
 
-/* ============ CONVERGENCE PANEL ============ */
-.conv{margin-top:48px;box-shadow:var(--shadow)}
-.conv-head{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:center;
-  padding:16px 20px;border:3px solid #333;background:#fff;font-size:11.5px;
+/* ================================================================
+   НОВЫЙ БЛОК · «РУЧНОЙ ПЕРЕКЛЮЧАТЕЛЬ УСИЛЕНИЯ»
+   Концептуальная схема механики из §3.1: ответ владельца →
+   сигнал релевантности → лента «Для вас» → миллионы просмотров.
+   Чистый CSS: на мобайле узлы складываются в колонку, стрелки
+   между ними автоматически меняют направление (► → ▼).
+   ================================================================ */
+.switchgrid{
+  margin-top:clamp(32px,6vw,48px);
+  display:grid;grid-template-columns:1fr;gap:42px;   /* зазор = место под стрелку */
+}
+.sw{
+  border:3px solid #333;background:#fff;box-shadow:var(--shadow);
+  padding:var(--space-card);position:relative;
+}
+/* Стрелка-связка между шагами. Mobile: указывает вниз. */
+.sw + .sw::before{
+  content:"▼";position:absolute;top:-33px;left:50%;transform:translateX(-50%);
+  font-size:13px;color:#333;
+}
+.sw + .sw::after{
+  content:"";position:absolute;top:-42px;left:50%;width:3px;height:22px;background:#333;transform:translateX(-50%);
+}
+.sw .st{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:#fff;background:#333;
+  display:inline-block;padding:5px 9px}
+.sw h4{margin-top:12px;font-weight:700;font-size:clamp(.95rem,1.6vw,1.08rem);line-height:1.2;text-transform:uppercase;letter-spacing:-.01em}
+.sw p{margin-top:9px;font-size:clamp(.8rem,1.2vw,.87rem);line-height:1.5}
+.sw.dark{background:#333;color:#fff}
+.sw.dark .st{background:#fff;color:#333}
+.sw.blue{background:var(--gold);color:#fff;border-color:var(--gold);box-shadow:var(--shadow-blue)}
+.sw.blue .st{background:#fff;color:var(--gold)}
+/* Реплики-переключатели — крупные «клавиши» */
+.keys{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.keys b{
+  border:2px solid currentColor;padding:8px 12px;font-weight:700;
+  font-size:clamp(.9rem,1.6vw,1.05rem);letter-spacing:.02em;
+}
+.swnote{
+  margin-top:26px;border:3px dashed #333;padding:var(--space-card);
+  font-size:clamp(.86rem,1.3vw,.95rem);line-height:1.55;background:#fff;
+}
+.swnote b{color:var(--gold)}
+
+/* ================================================================
+   ПАНЕЛЬ КОНВЕРГЕНЦИИ (структурный инвариант)
+   ================================================================ */
+.conv{margin-top:clamp(32px,6vw,48px);box-shadow:var(--shadow)}
+.conv-head{display:flex;flex-wrap:wrap;gap:12px 26px;align-items:center;
+  padding:16px 18px;border:3px solid #333;background:#fff;
+  font-size:clamp(10px,1.4vw,11.5px);
   letter-spacing:.08em;text-transform:uppercase;font-weight:600}
 .conv-head .l{display:flex;align-items:center;gap:9px;color:#333}
 .conv-head .l i{width:20px;height:12px;display:inline-block;border:1px solid #333}
 .conv-head .arrow{color:#333;letter-spacing:.05em}
-.conv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;
-  border:3px solid #333;border-top:none}
-.conv-cell{padding:24px 22px 26px;border-right:3px solid #333;border-bottom:3px solid #333;
-  position:relative;background:#fff;transition:none}
-.conv-cell:nth-child(3n){border-right:none}
-.conv-cell:nth-last-child(-n+3){border-bottom:none}
-.conv-cell:hover{background:#004F9F;color:#fff}
-.conv-cell:hover .nn{color:#fff}
-.conv-cell:hover h5{color:#fff}
-.conv-cell:hover p{color:#fff}
+.conv-grid{display:grid;grid-template-columns:1fr;border:3px solid #333;border-top:none}
+.conv-cell{padding:var(--space-card);border-bottom:3px solid #333;position:relative;background:#fff}
+.conv-cell:last-child{border-bottom:none}
 .conv-cell .nn{font-size:13px;color:#333;letter-spacing:.1em;font-weight:700}
-.conv-cell h5{margin-top:10px;font-weight:700;font-size:1.02rem;line-height:1.15;text-transform:uppercase;letter-spacing:-.01em}
-.conv-cell p{margin-top:11px;color:#333;font-weight:400;font-size:.88rem;line-height:1.5}
+.conv-cell h5{margin-top:10px;font-weight:700;font-size:clamp(.95rem,1.5vw,1.02rem);line-height:1.18;text-transform:uppercase;letter-spacing:-.01em}
+.conv-cell p{margin-top:11px;color:#333;font-size:clamp(.82rem,1.2vw,.88rem);line-height:1.5}
+@media (hover:hover){
+  .conv-cell:hover{background:var(--gold)}
+  .conv-cell:hover .nn,.conv-cell:hover h5,.conv-cell:hover p{color:#fff}
+}
 
-/* ============ HYPOTHESES ============ */
-.hyps{margin-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:0;border:3px solid #333}
-.hyp{border-right:3px solid #333;border-bottom:3px solid #333;padding:26px 26px;background:#fff;position:relative;transition:none}
-.hyp:nth-child(2n){border-right:none}
-.hyp:nth-last-child(-n+2){border-bottom:none}
-.hyp::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:#004F9F}
+/* ================================================================
+   ГИПОТЕЗЫ
+   ================================================================ */
+.hyps{margin-top:clamp(32px,6vw,48px);display:grid;grid-template-columns:1fr;border:3px solid #333}
+.hyp{border-bottom:3px solid #333;padding:var(--space-card);background:#fff;position:relative}
+.hyp:last-child{border-bottom:none}
+.hyp::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--gold)}
 .hyp.main::before{background:#333}
 .hyp .code{font-size:12px;letter-spacing:.08em;color:#333;font-weight:700;text-transform:uppercase}
-.hyp h4{margin-top:12px;font-weight:600;font-size:1.04rem;line-height:1.22;text-transform:uppercase;letter-spacing:-.01em}
+.hyp h4{margin-top:12px;font-weight:600;font-size:clamp(.93rem,1.5vw,1.04rem);line-height:1.25;text-transform:uppercase;letter-spacing:-.01em}
 .hyp .status{margin-top:18px;display:inline-flex;align-items:center;gap:8px;
-  font-size:11px;letter-spacing:.05em;color:#004F9F;text-transform:uppercase;font-weight:600}
-.hyp .status .tick{width:18px;height:18px;border:2px solid #004F9F;display:grid;place-items:center;font-size:10px}
+  font-size:11px;letter-spacing:.05em;color:var(--gold);text-transform:uppercase;font-weight:600}
+.hyp .status .tick{width:18px;height:18px;border:2px solid var(--gold);display:grid;place-items:center;font-size:10px;flex:none}
 .hyp.main .status{color:#333}
 .hyp.main .status .tick{border-color:#333}
 .hyp.utoch .status{color:#333}
 .hyp.utoch .status .tick{border-color:#333}
-.hyp:hover{background:#333;color:#fff}
-.hyp:hover .code,.hyp:hover h4,.hyp:hover .status{color:#fff!important}
-.hyp:hover .status .tick{border-color:#fff}
-.hyp:hover::before{background:#fff}
+@media (hover:hover){
+  .hyp:hover{background:#333;color:#fff}
+  .hyp:hover .code,.hyp:hover h4,.hyp:hover .status{color:#fff!important}
+  .hyp:hover .status .tick{border-color:#fff}
+  .hyp:hover::before{background:#fff}
+}
 
-/* ============ THEORY ============ */
-.theory{margin-top:46px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:3px solid #333}
-.th{border-right:3px solid #333;border-bottom:3px solid #333;padding:24px;background:#fff;transition:none}
-.th:nth-child(3n){border-right:none}
-.th:nth-last-child(-n+3){border-bottom:none}
-.th:hover{background:#004F9F;color:#fff}
-.th:hover .name,.th:hover .role,.th:hover p{color:#fff}
-.th .name{font-weight:700;font-size:1.18rem;text-transform:uppercase;letter-spacing:-.02em}
-.th .role{margin-top:5px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#004F9F;font-weight:600}
-.th p{margin-top:13px;font-size:.88rem;color:#333;font-weight:400;line-height:1.5}
+/* ================================================================
+   ТЕОРЕТИЧЕСКАЯ ОПОРА
+   ================================================================ */
+.theory{margin-top:clamp(30px,5vw,46px);display:grid;grid-template-columns:1fr;border:3px solid #333}
+.th{border-bottom:3px solid #333;padding:var(--space-card);background:#fff}
+.th:last-child{border-bottom:none}
+.th .name{font-weight:700;font-size:clamp(1.05rem,1.8vw,1.18rem);text-transform:uppercase;letter-spacing:-.02em}
+.th .role{margin-top:5px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.th p{margin-top:13px;font-size:clamp(.82rem,1.2vw,.88rem);color:#333;line-height:1.5}
+@media (hover:hover){
+  .th:hover{background:var(--gold)}
+  .th:hover .name,.th:hover .role,.th:hover p{color:#fff}
+}
 
-/* ============ PULLQUOTE ============ */
-.pull{padding:100px 0;background:#333;border-bottom:3px solid #333}
+/* ================================================================
+   ЦИТАТА
+   ================================================================ */
+.pull{padding:clamp(64px,12vw,100px) 0;background:#333;border-bottom:3px solid #333}
 .pull blockquote{
-  font-family:'IBM Plex Mono',monospace;font-style:normal;font-weight:700;
-  font-size:clamp(1.4rem,3.6vw,2.8rem);line-height:1.2;color:#fff;
-  max-width:26ch;margin:0 auto;text-align:center;position:relative;text-transform:uppercase;letter-spacing:-.02em;
+  font-weight:700;
+  font-size:clamp(1.25rem,3.6vw,2.8rem);line-height:1.22;color:#fff;
+  max-width:26ch;margin:0 auto;text-align:center;text-transform:uppercase;letter-spacing:-.02em;
 }
-.pull blockquote::before{content:"«";color:#004F9F}
-.pull blockquote::after{content:"»";color:#004F9F}
+.pull blockquote::before{content:"«";color:var(--gold)}
+.pull blockquote::after{content:"»";color:var(--gold)}
 
-/* ============ CONCLUSION ============ */
-.concl-grid{margin-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:0;border:3px solid #333}
-.cbox{padding:30px 28px;background:#fff;transition:none;border-right:3px solid #333}
-.cbox:last-child{border-right:none;border-left:8px solid #004F9F}
-.cbox:first-child{border-left:8px solid #333}
-.cbox:hover{background:#333;color:#fff}
-.cbox:hover h4,.cbox:hover p{color:#fff}
-.cbox h4{font-weight:700;font-size:1.3rem;text-transform:uppercase;letter-spacing:-.02em}
-.cbox p{margin-top:14px;color:#333;font-weight:400;font-size:.95rem;line-height:1.55}
-
-/* ============ TIMELINE (curve) ============ */
-.curvewrap{margin-top:48px;border:3px solid #333;background:#fff;padding:28px 26px 22px;box-shadow:var(--shadow)}
-.curvewrap svg{width:100%;height:auto;display:block;overflow:visible}
-.legend{display:flex;gap:24px;flex-wrap:wrap;margin-top:10px;font-size:11px;letter-spacing:.05em;color:#333;text-transform:uppercase}
+/* ================================================================
+   КРИВАЯ ВИДИМОСТИ (таймлайн Трампа)
+   Mobile: график получает min-width и листается горизонтально —
+   подписи событий остаются читаемыми, ничего не сжимается.
+   ================================================================ */
+.curvewrap{margin-top:clamp(32px,6vw,48px);border:3px solid #333;background:#fff;
+  padding:clamp(16px,3vw,28px) clamp(14px,3vw,26px) clamp(14px,3vw,22px);box-shadow:var(--shadow)}
+.curvescroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.curvescroll svg{width:100%;min-width:760px;height:auto;display:block;overflow:visible}
+.legend{display:flex;gap:14px 24px;flex-wrap:wrap;margin-top:12px;font-size:clamp(10px,1.4vw,11px);
+  letter-spacing:.05em;color:#333;text-transform:uppercase}
 .legend i{display:inline-block;width:24px;height:10px;margin-right:8px;vertical-align:0;border:1px solid #333}
-.tl-cards{margin-top:22px;display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:3px solid #333}
-.tlc{border-right:3px solid #333;padding:16px 14px 18px;background:#fff;border-top:8px solid #333;transition:none}
-.tlc:last-child{border-right:none}
+.tl-cards{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;border:3px solid #333}
+.tlc{border-right:3px solid #333;border-bottom:3px solid #333;padding:16px 14px 18px;background:#fff;border-top:8px solid #333}
+.tlc:nth-child(2n){border-right:none}
+.tlc:nth-last-child(-n+1){border-bottom:none}
 .tlc.x{border-top-color:#333}
-.tlc.meta{border-top-color:#004F9F}
-.tlc:hover{background:#333;color:#fff}
-.tlc.meta:hover{background:#004F9F}
-.tlc:hover .d,.tlc:hover .t,.tlc:hover .pl{color:#fff}
+.tlc.meta{border-top-color:var(--gold)}
 .tlc .d{font-size:11px;color:#333;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
-.tlc .t{margin-top:7px;font-weight:700;font-size:1rem;line-height:1.1;text-transform:uppercase;letter-spacing:-.01em}
+.tlc .t{margin-top:7px;font-weight:700;font-size:clamp(.9rem,1.5vw,1rem);line-height:1.12;text-transform:uppercase;letter-spacing:-.01em}
 .tlc .pl{margin-top:9px;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#333}
-
-/* ============ FOOTER ============ */
-footer{padding:64px 0 80px;text-align:center;background:#333;color:#fff}
-footer .ft-title{font-family:'IBM Plex Mono',monospace;font-style:normal;font-size:1.2rem;color:#fff;text-transform:uppercase;line-height:1.3;max-width:40ch;margin:0 auto;font-weight:600}
-footer .ft-meta{margin-top:22px;font-size:12px;color:#fff;letter-spacing:.05em;line-height:2;text-transform:uppercase}
-footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
-
-/* ============ АДАПТИВ ============ */
-@media(max-width:980px){
-  .keysplit{grid-template-columns:1fr}
-  .keyside.x{border-right:none;border-bottom:3px solid #333}
-  .conv-grid{grid-template-columns:1fr}
-  .conv-cell{border-right:none}
-  .conv-cell:nth-last-child(-n+3){border-bottom:3px solid #333}
-  .conv-cell:last-child{border-bottom:none}
-  .theory{grid-template-columns:1fr}
-  .th{border-right:none}
-  .facts-inner{grid-template-columns:repeat(3,1fr)}
-  .fact:nth-child(3){border-right:none}
-  .fact:nth-child(-n+3){border-bottom:3px solid #333}
-  .models,.hyps,.concl-grid,.charts{grid-template-columns:1fr}
-  .hyp{border-right:none}
-  .cbox{border-right:none;border-bottom:3px solid #333}
-  .cbox:last-child{border-bottom:none}
-  .card.span2{grid-column:span 1}
-  .tl-cards{grid-template-columns:1fr 1fr}
-  .matrix{overflow-x:auto}
-  .matrix table{min-width:640px}
-  section{padding:68px 0}
+@media (hover:hover){
+  .tlc:hover{background:#333}
+  .tlc.meta:hover{background:var(--gold)}
+  .tlc:hover .d,.tlc:hover .t,.tlc:hover .pl{color:#fff}
 }
-@media(max-width:520px){
-  .facts-inner{grid-template-columns:repeat(2,1fr)}
-  .fact{border-right:none}
-  .hero-meta{width:100%}
-  .hero-meta span{border-right:none;border-bottom:3px solid #333}
-  .hero-meta span:last-child{border-bottom:none}
+
+/* ================================================================
+   НОВЫЙ БЛОК · «АНАТОМИЯ ВЕЛИКОГО ДЕПЛАТФОРМИНГА»
+   Январь 2021: лестница событий 7–12 января + аудитория ~149 млн
+   подписок (горизонтальные CSS-полосы) + панель «куда ушла
+   аудитория» (мини-столбики Gab). Всё на HTML/CSS — идеально
+   тянется на любую ширину без потери читаемости.
+   ================================================================ */
+.depl{margin-top:clamp(32px,6vw,48px);display:grid;grid-template-columns:1fr;gap:clamp(20px,4vw,28px)}
+.panel{border:3px solid #333;background:#fff;box-shadow:var(--shadow);padding:var(--space-card);display:flex;flex-direction:column}
+.panel .pt{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:#333;
+  display:inline-flex;align-self:flex-start;padding:6px 11px;font-weight:600}
+.panel h3{margin-top:14px;font-weight:700;font-size:clamp(1rem,1.8vw,1.18rem);line-height:1.15;text-transform:uppercase;letter-spacing:-.02em}
+.panel .src{margin-top:auto;padding-top:14px;border-top:3px solid #333;font-size:10px;letter-spacing:.04em;text-transform:uppercase}
+.panel .note{margin-top:14px;margin-bottom:6px;font-size:clamp(.82rem,1.3vw,.88rem);line-height:1.5}
+
+/* Лестница событий: вертикальная ось слева, даты-узлы. */
+.ladder{margin-top:20px;border-left:3px solid #333;display:flex;flex-direction:column;gap:18px;padding:6px 0 6px 0}
+.rung{position:relative;padding-left:24px}
+.rung::before{
+  content:"";position:absolute;left:-8px;top:6px;width:13px;height:13px;background:#333;
+}
+.rung.blue::before{background:var(--gold)}
+.rung .rd{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+.rung .rd b{background:#333;color:#fff;padding:2px 7px;margin-right:8px}
+.rung.blue .rd b{background:var(--gold)}
+.rung .rw{margin-top:5px;font-size:clamp(.82rem,1.3vw,.88rem);line-height:1.45}
+
+/* Аудиторные полосы: ширина задана инлайном (% от Twitter = 88 млн),
+   рост — анимация scaleX при появлении панели (.in). */
+.abars{margin-top:20px;display:flex;flex-direction:column;gap:14px}
+.abar .al{display:flex;justify-content:space-between;gap:10px;font-size:clamp(.76rem,1.2vw,.84rem);
+  text-transform:uppercase;margin-bottom:6px}
+.abar .al b{font-weight:700;white-space:nowrap}
+.abar .at{height:24px;border:3px solid #333;background:#fff;overflow:hidden}
+.abar .at span{display:block;height:100%;background:#333;min-width:4px;
+  transform:scaleX(0);transform-origin:0 50%;
+  transition:transform .9s cubic-bezier(.22,.61,.36,1) .15s}
+.abar.blue .at span{background:var(--gold)}
+.panel.in .abar .at span{transform:scaleX(1)}
+.asum{
+  margin-top:18px;border:3px solid var(--gold);color:var(--gold);
+  padding:14px 16px;font-weight:700;text-transform:uppercase;
+  font-size:clamp(.86rem,1.5vw,1rem);letter-spacing:.02em;
+  display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;
+}
+.asum .big{font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:-.04em;line-height:1}
+
+/* Мини-столбики Gab: рост через scaleY. */
+.gab{margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:end;
+  border:2px solid #333;padding:14px 12px 10px;background:#fff}
+.gcol{display:flex;flex-direction:column;align-items:center;gap:8px}
+.gcol .gv{font-size:clamp(.78rem,1.3vw,.88rem);font-weight:700}
+.gcol .gb{width:100%;max-width:64px;background:#333;
+  transform:scaleY(0);transform-origin:50% 100%;
+  transition:transform .8s cubic-bezier(.22,.61,.36,1) .2s}
+.gcol:nth-child(2) .gb{background:var(--gold)}
+.panel.in .gcol .gb{transform:scaleY(1)}
+.gcol .gl{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;text-align:center;line-height:1.3}
+
+/* ================================================================
+   НОВЫЙ БЛОК · «РЕГУЛЯТОРНЫЙ ГОРИЗОНТ: DSA» (гипотеза H4)
+   Две колонки покрытия (Meta-модель / X-модель) + три открытых
+   пробела регулирования. На мобайле колонки складываются.
+   ================================================================ */
+.dsa{margin-top:clamp(32px,6vw,48px)}
+.dsa-intro{
+  border:3px solid #333;background:#333;color:#fff;box-shadow:var(--shadow);
+  padding:var(--space-card);display:flex;flex-direction:column;gap:8px;
+}
+.dsa-intro .dt{font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;color:#fff}
+.dsa-intro h3{font-weight:700;font-size:clamp(1.05rem,2.2vw,1.45rem);text-transform:uppercase;letter-spacing:-.02em;line-height:1.15}
+.dsa-intro p{font-size:clamp(.84rem,1.3vw,.92rem);line-height:1.55}
+.dsa-intro b{color:#fff;background:var(--gold);padding:0 .3em;font-weight:700}
+.dsa-cols{margin-top:clamp(20px,4vw,28px);display:grid;grid-template-columns:1fr;gap:clamp(20px,4vw,28px)}
+.dsa-col{border:3px solid #333;background:#fff;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.dsa-col .head{padding:16px var(--space-card);border-bottom:3px solid #333;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#fff}
+.dsa-col.meta .head{background:var(--gold)}
+.dsa-col.x .head{background:#333}
+.dsa-col .verdict{padding:14px var(--space-card);border-bottom:3px solid #333;
+  font-weight:700;font-size:clamp(.95rem,1.6vw,1.1rem);text-transform:uppercase;letter-spacing:-.01em}
+.dsa-col.meta .verdict{color:var(--gold)}
+.dsa-col ul{list-style:none;padding:var(--space-card);display:flex;flex-direction:column;gap:12px;flex:1}
+.dsa-col li{display:flex;gap:11px;font-size:clamp(.82rem,1.3vw,.9rem);line-height:1.5}
+.dsa-col.meta li::before{content:"✓";font-weight:700;color:var(--gold);flex:none}
+.dsa-col.x li::before{content:"✕";font-weight:700;color:#333;flex:none}
+.dsa-gaps{margin-top:clamp(20px,4vw,28px);border:3px dashed #333;padding:var(--space-card);background:#fff}
+.dsa-gaps .gt{font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-bottom:14px}
+.dsa-gaps .row{display:grid;grid-template-columns:1fr;gap:12px}
+.gap{border:2px solid #333;padding:14px 16px}
+.gap b{display:block;font-size:clamp(.88rem,1.4vw,.98rem);text-transform:uppercase;letter-spacing:-.01em}
+.gap span{display:block;margin-top:6px;font-size:clamp(.8rem,1.2vw,.86rem);line-height:1.45}
+
+/* ================================================================
+   ВЫВОД
+   ================================================================ */
+.concl-grid{margin-top:clamp(32px,6vw,48px);display:grid;grid-template-columns:1fr;border:3px solid #333}
+.cbox{padding:var(--space-card);background:#fff;border-bottom:3px solid #333}
+.cbox:first-child{border-left:8px solid #333}
+.cbox:last-child{border-bottom:none;border-left:8px solid var(--gold)}
+.cbox h4{font-weight:700;font-size:clamp(1.1rem,2vw,1.3rem);text-transform:uppercase;letter-spacing:-.02em}
+.cbox p{margin-top:14px;color:#333;font-size:clamp(.86rem,1.3vw,.95rem);line-height:1.55}
+@media (hover:hover){
+  .cbox:hover{background:#333}
+  .cbox:hover h4,.cbox:hover p{color:#fff}
+}
+
+/* ================================================================
+   FOOTER
+   ================================================================ */
+footer{padding:clamp(48px,9vw,64px) 0 clamp(60px,10vw,80px);text-align:center;background:#333;color:#fff}
+footer .ft-title{font-size:clamp(1rem,2vw,1.2rem);color:#fff;text-transform:uppercase;line-height:1.3;max-width:40ch;margin:0 auto;font-weight:600}
+footer .ft-meta{margin-top:22px;font-size:clamp(11px,1.5vw,12px);color:#fff;letter-spacing:.05em;line-height:2;text-transform:uppercase}
+footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
+.totop{
+  margin-top:34px;display:inline-flex;align-items:center;gap:10px;
+  color:#fff;text-decoration:none;border:3px solid #fff;
+  padding:14px 22px;                       /* удобная touch-цель ≥ 48px */
+  font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+}
+@media (hover:hover){
+  .totop:hover{background:var(--gold);border-color:var(--gold)}
+}
+
+/* ================================================================
+   БРЕЙКПОИНТ 1 · ≥ 640px (крупные телефоны / планшеты)
+   ================================================================ */
+@media (min-width:640px){
+  .facts-inner{grid-template-columns:repeat(3,1fr)}
+  .fact{border-right:3px solid #333}
+  .fact:nth-child(2n){border-right:3px solid #333}
+  .fact:nth-child(3n){border-right:none}
+  .fact:nth-last-child(-n+2){border-bottom:3px solid #333}
+  .fact:nth-last-child(-n+3){border-bottom:none}
+
+  .hero-meta{flex-direction:row;flex-wrap:wrap;width:fit-content}
+  .hero-meta span{border-bottom:none;border-right:3px solid #333}
+  .hero-meta span:last-child{border-right:none}
+
+  .tl-cards{grid-template-columns:repeat(3,1fr)}
+  .tlc{border-right:3px solid #333}
+  .tlc:nth-child(2n){border-right:3px solid #333}
+  .tlc:nth-child(3n){border-right:none}
+  .tlc:nth-last-child(-n+2){border-bottom:none}
+
+  .dsa-gaps .row{grid-template-columns:repeat(3,1fr)}
+  .conv-grid{grid-template-columns:1fr 1fr}
+  .conv-cell{border-right:3px solid #333}
+  .conv-cell:nth-child(2n){border-right:none}
+  .conv-cell:nth-last-child(-n+2){border-bottom:none}
+  .theory{grid-template-columns:1fr 1fr}
+  .th{border-right:3px solid #333}
+  .th:nth-child(2n){border-right:none}
+  .th:nth-last-child(-n+2){border-bottom:none}
+}
+
+/* ================================================================
+   БРЕЙКПОИНТ 2 · ≥ 980px (десктоп)
+   ================================================================ */
+@media (min-width:980px){
+  /* Цепочка проблемы: вертикальную схему меняем на горизонтальную. */
+  .flow .v{display:none}
+  .flow .h{display:block}
+
+  .facts-inner{grid-template-columns:repeat(6,1fr)}
+  .fact{border-bottom:none!important;border-right:3px solid #333!important}
+  .fact:last-child{border-right:none!important}
+
+  .keysplit{grid-template-columns:1fr 1fr}
+  .keyside.x{border-bottom:none;border-right:3px solid #333}
+
+  .models{grid-template-columns:1fr 1fr}
+  .charts{grid-template-columns:1fr 1fr}
+  .card.span2{grid-column:span 2}
+
+  /* Схема переключателя: четыре шага в один ряд, стрелки — вправо. */
+  .switchgrid{grid-template-columns:repeat(4,1fr);gap:46px 38px}
+  .sw + .sw::before{
+    content:"►";top:50%;left:-27px;transform:translateY(-50%);
+  }
+  .sw + .sw::after{
+    top:50%;left:-38px;width:24px;height:3px;transform:translateY(-50%);
+  }
+
+  .conv-grid{grid-template-columns:repeat(3,1fr)}
+  .conv-cell{border-right:3px solid #333;border-bottom:3px solid #333}
+  .conv-cell:nth-child(3n){border-right:none}
+  .conv-cell:nth-last-child(-n+3){border-bottom:none}
+
+  .hyps{grid-template-columns:1fr 1fr}
+  .hyp{border-right:3px solid #333}
+  .hyp:nth-child(2n){border-right:none}
+  .hyp:nth-last-child(-n+2){border-bottom:none}
+
+  .theory{grid-template-columns:repeat(3,1fr)}
+  .th{border-right:3px solid #333;border-bottom:3px solid #333}
+  .th:nth-child(3n){border-right:none}
+  .th:nth-last-child(-n+3){border-bottom:none}
+
+  .tl-cards{grid-template-columns:repeat(5,1fr)}
+  .tlc{border-bottom:none;border-right:3px solid #333}
+  .tlc:nth-child(2n),.tlc:nth-child(3n){border-right:3px solid #333}
+  .tlc:last-child{border-right:none}
+
+  .depl{grid-template-columns:1fr 1fr}
+  .panel.wide{grid-column:span 2}
+
+  .dsa-cols{grid-template-columns:1fr 1fr}
+  .concl-grid{grid-template-columns:1fr 1fr}
+  .cbox{border-bottom:none;border-right:3px solid #333}
+  .cbox:last-child{border-right:none}
+
+  /* Уровни: метка уходит в левую колонку — журнальная вёрстка. */
+  .level{grid-template-columns:210px 1fr}
+  .level .tag{border-bottom:none;border-right:3px solid #333;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;padding:22px 20px}
+  .level .tag .no{font-size:2.2rem}
+
+  /* На десктопе подсказки прокрутки не нужны. */
+  .scrollhint{display:none}
+  .curvescroll{overflow:visible}
+  .curvescroll svg{min-width:0}
+}
+
+/* ================================================================
+   ДОСТУПНОСТЬ · УВАЖЕНИЕ К prefers-reduced-motion
+   Пользователь, отключивший анимации в системе, получает сайт
+   полностью статичным: контент виден сразу, лента не бежит.
+   ================================================================ */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1}
+  .reveal.in{animation:none}
+  .marquee .track{animation:none;padding-left:0}
+  .scrolldown span{animation:none}
+  .card svg .bar,.card svg .barh,.rbar span,.abar .at span,.gcol .gb{transform:none;transition:none}
+  .card svg .arc{stroke-dashoffset:0;transition:none}
+  .progress i{transition:none}
 }
 </style>
 </head>
 <body>
-<!-- паттерн штриховки для вторичных элементов (контраст без цвета) -->
+
+<!-- Прогресс чтения (ширину задаёт JS через --p) -->
+<div class="progress" aria-hidden="true"><i id="pbar"></i></div>
+
+<!-- ===== НАВИГАЦИЯ ===== -->
+<nav class="nav" aria-label="Разделы исследования">
+  <a class="brand" href="#top">ВКР·2026</a>
+  <a href="#problem" data-spy>Проблема</a>
+  <a href="#levels" data-spy>Уровни</a>
+  <a href="#models" data-spy>Модели</a>
+  <a href="#matrix" data-spy>Матрица</a>
+  <a href="#stats" data-spy>Цифры</a>
+  <a href="#switch" data-spy>Усиление</a>
+  <a href="#timeline" data-spy>Таймлайн</a>
+  <a href="#deplatforming" data-spy>Деплатформинг</a>
+  <a href="#hypotheses" data-spy>Гипотезы</a>
+  <a href="#invariant" data-spy>Инвариант</a>
+  <a href="#dsa" data-spy>DSA</a>
+  <a href="#conclusion" data-spy>Вывод</a>
+</nav>
+
+<!-- Паттерн штриховки для вторичных элементов (контраст без цвета) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
     <rect width="9" height="9" fill="#ffffff"/>
@@ -398,7 +871,7 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
 </defs></svg>
 
 <!-- ===== HERO ===== -->
-<header class="hero">
+<header class="hero" id="top">
   <div class="hero-grid"></div>
   <div class="wrap">
     <div class="kicker reveal">Социология медиа · Магистерская диссертация</div>
@@ -410,7 +883,7 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
       <span>ЮФУ · 2026</span>
     </div>
   </div>
-  <div class="scrolldown">пролистать<span>↓</span></div>
+  <div class="scrolldown" aria-hidden="true">пролистать<span>↓</span></div>
 </header>
 
 <!-- ===== FACTS ===== -->
@@ -427,20 +900,21 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
   </div>
 </div>
 
-<!-- ===== БЕГУЩАЯ СТРОКА ===== -->
+<!-- ===== БЕГУЩАЯ СТРОКА (контент в дорожке продублирован для бесшовной петли) ===== -->
 <div class="marquee"><div class="track">
-<span>Медиамагнаты</span><span>Цифровая медиавласть</span><span>Алгоритмическая видимость</span><span>X · персоналистская модель</span><span>Meta · институциональная модель</span><span>Структурный инвариант</span><span>Приватизация публичной сферы</span><span>Символическое насилие</span><span>Власть переключения сетей</span><span>Цифровая харизма</span><span>Психографическое нацеливание</span><span>Лента рекомендаций «Для вас»</span><span>Случай Маска · X</span><span>Случай Цукерберга · Meta</span><span>Отзываемый авторитет</span>
-<span>Медиамагнаты</span><span>Цифровая медиавласть</span><span>Алгоритмическая видимость</span><span>X · персоналистская модель</span><span>Meta · институциональная модель</span><span>Структурный инвариант</span><span>Приватизация публичной сферы</span><span>Символическое насилие</span><span>Власть переключения сетей</span><span>Цифровая харизма</span><span>Психографическое нацеливание</span><span>Лента рекомендаций «Для вас»</span><span>Случай Маска · X</span><span>Случай Цукерберга · Meta</span><span>Отзываемый авторитет</span>
+<span>Медиамагнаты</span><span>Цифровая медиавласть</span><span>Алгоритмическая видимость</span><span>X · персоналистская модель</span><span>Meta · институциональная модель</span><span>Структурный инвариант</span><span>Приватизация публичной сферы</span><span>Символическое насилие</span><span>Власть переключения сетей</span><span>Цифровая харизма</span><span>Психографическое нацеливание</span><span>Лента рекомендаций «Для вас»</span><span>Случай Маска · X</span><span>Случай Цукерберга · Meta</span><span>Отзываемый авторитет</span><span aria-hidden="true">Медиамагнаты</span><span aria-hidden="true">Цифровая медиавласть</span><span aria-hidden="true">Алгоритмическая видимость</span><span aria-hidden="true">X · персоналистская модель</span><span aria-hidden="true">Meta · институциональная модель</span><span aria-hidden="true">Структурный инвариант</span><span aria-hidden="true">Приватизация публичной сферы</span><span aria-hidden="true">Символическое насилие</span><span aria-hidden="true">Власть переключения сетей</span><span aria-hidden="true">Цифровая харизма</span><span aria-hidden="true">Психографическое нацеливание</span><span aria-hidden="true">Лента рекомендаций «Для вас»</span><span aria-hidden="true">Случай Маска · X</span><span aria-hidden="true">Случай Цукерберга · Meta</span><span aria-hidden="true">Отзываемый авторитет</span>
 </div></div>
 
-<!-- ===== PROBLEM / FLOW ===== -->
-<section>
+<!-- ===== ПРОБЛЕМА / ЦЕПОЧКА ===== -->
+<section id="problem">
   <div class="wrap">
     <div class="sec-tag reveal">Постановка проблемы</div>
     <h2 class="reveal">Контроль над каналом распространения стал контролем над легитимностью</h2>
     <p class="lead reveal">Цифровизация общения и превращение социальных площадок в главную инфраструктуру публичного слова создали положение, при котором владелец площадки фактически определяет, кто из политиков получает видимость, — а вместе с ней и возможность быть признанным авторитетом. Работа прослеживает эту цепочку шаг за шагом.</p>
     <div class="flow reveal">
-      <svg viewBox="0 0 1120 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Схема: от медиатизации к политическому авторитету">
+
+      <!-- ГОРИЗОНТАЛЬНАЯ версия цепочки — только десктоп (≥980px) -->
+      <svg class="h" viewBox="0 0 1120 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Схема: от медиатизации к политическому авторитету">
         <defs>
           <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stop-color="#333333"/><stop offset="1" stop-color="#004F9F"/>
@@ -449,9 +923,7 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
             <path d="M0,0 L10,5 L0,10 z" fill="#333333"/>
           </marker>
         </defs>
-        <!-- nodes -->
         <g font-family="IBM Plex Mono">
-          <!-- node template -->
           <g>
             <rect x="8" y="68" width="200" height="94" fill="#FFFFFF" stroke="#333333"/>
             <text x="108" y="100" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">Медиатизация</text>
@@ -474,23 +946,121 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
             <rect x="912" y="60" width="200" height="110" fill="#FFFFFF" stroke="#333333"/>
             <text x="1012" y="98" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">Политический</text>
             <text x="1012" y="119" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">авторитет</text>
-            <text x="1012" y="143" text-anchor="middle" fill="#004F9F" font-size="12.5" font-family="IBM Plex Mono">зависимая переменная</text>
+            <text x="1012" y="143" text-anchor="middle" fill="#004F9F" font-size="12.5">зависимая переменная</text>
           </g>
-          <!-- arrows -->
           <line x1="214" y1="115" x2="304" y2="115" stroke="#333333" stroke-width="1.5" marker-end="url(#ar)"/>
           <line x1="518" y1="115" x2="608" y2="115" stroke="#333333" stroke-width="1.5" marker-end="url(#ar)"/>
           <line x1="822" y1="115" x2="904" y2="115" stroke="#333333" stroke-width="1.5" marker-end="url(#ar)"/>
-          <text x="560" y="206" text-anchor="middle" fill="#333333" font-size="12" font-family="IBM Plex Mono" letter-spacing="2">МАГНАТ УПРАВЛЯЕТ ВТОРЫМ ЗВЕНОМ — И ТЕМ САМЫМ ВСЕЙ ЦЕПОЧКОЙ</text>
+          <text x="560" y="206" text-anchor="middle" fill="#333333" font-size="12" letter-spacing="2">МАГНАТ УПРАВЛЯЕТ ВТОРЫМ ЗВЕНОМ — И ТЕМ САМЫМ ВСЕЙ ЦЕПОЧКОЙ</text>
           <line x1="270" y1="40" x2="850" y2="40" stroke="url(#g1)" stroke-width="2"/>
           <circle cx="412" cy="40" r="4" fill="#004F9F"/>
         </g>
       </svg>
+
+      <!-- ВЕРТИКАЛЬНАЯ версия той же цепочки — мобильные экраны.
+           Размеры подобраны так, чтобы при ширине ~340px текст
+           оставался крупным и читаемым без зума. -->
+      <svg class="v" viewBox="0 0 360 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Схема: от медиатизации к политическому авторитету (вертикально)">
+        <defs>
+          <marker id="arv" markerWidth="11" markerHeight="11" refX="6" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#333333"/>
+          </marker>
+        </defs>
+        <g font-family="IBM Plex Mono">
+          <rect x="40" y="8" width="280" height="92" fill="#FFFFFF" stroke="#333333" stroke-width="2"/>
+          <text x="180" y="44" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">Медиатизация</text>
+          <text x="180" y="66" text-anchor="middle" fill="#333333" font-size="12">политика подчиняется</text>
+          <text x="180" y="83" text-anchor="middle" fill="#333333" font-size="12">логике площадок</text>
+
+          <line x1="180" y1="102" x2="180" y2="132" stroke="#333333" stroke-width="2" marker-end="url(#arv)"/>
+
+          <!-- Второе звено выделено: им управляет магнат -->
+          <rect x="40" y="140" width="280" height="92" fill="#FFFFFF" stroke="#004F9F" stroke-width="3"/>
+          <text x="180" y="176" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">Алгоритм</text>
+          <text x="180" y="198" text-anchor="middle" fill="#333333" font-size="12">видимость задает</text>
+          <text x="180" y="215" text-anchor="middle" fill="#333333" font-size="12">собственник кода</text>
+
+          <line x1="180" y1="234" x2="180" y2="264" stroke="#333333" stroke-width="2" marker-end="url(#arv)"/>
+
+          <rect x="40" y="272" width="280" height="92" fill="#FFFFFF" stroke="#333333" stroke-width="2"/>
+          <text x="180" y="308" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">Видимость</text>
+          <text x="180" y="330" text-anchor="middle" fill="#333333" font-size="12">условие признания</text>
+          <text x="180" y="347" text-anchor="middle" fill="#333333" font-size="12">и поддержки</text>
+
+          <line x1="180" y1="366" x2="180" y2="396" stroke="#333333" stroke-width="2" marker-end="url(#arv)"/>
+
+          <rect x="40" y="404" width="280" height="104" fill="#FFFFFF" stroke="#333333" stroke-width="2"/>
+          <text x="180" y="442" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">Политический</text>
+          <text x="180" y="463" text-anchor="middle" fill="#333333" font-size="17" font-weight="700">авторитет</text>
+          <text x="180" y="487" text-anchor="middle" fill="#004F9F" font-size="12">зависимая переменная</text>
+
+          <text x="180" y="548" text-anchor="middle" fill="#333333" font-size="11" letter-spacing="1.5">МАГНАТ УПРАВЛЯЕТ ВТОРЫМ ЗВЕНОМ —</text>
+          <text x="180" y="566" text-anchor="middle" fill="#333333" font-size="11" letter-spacing="1.5">И ТЕМ САМЫМ ВСЕЙ ЦЕПОЧКОЙ</text>
+          <line x1="60" y1="582" x2="300" y2="582" stroke="#004F9F" stroke-width="2"/>
+        </g>
+      </svg>
+
     </div>
   </div>
 </section>
 
-<!-- ===== TWO MODELS ===== -->
-<section>
+<!-- ===== НОВЫЙ БЛОК · ТРИ УРОВНЯ КОНСТРУИРОВАНИЯ (глава 2) ===== -->
+<section id="levels">
+  <div class="wrap">
+    <div class="sec-tag reveal">Как устроено конструирование</div>
+    <h2 class="reveal">Три уровня одной машины</h2>
+    <p class="lead reveal">Вторая глава показывает: авторитет в цифровой среде производится одновременно на трех уровнях. Структура задает, кто вообще может быть услышан; дискурс — в каких словах борьба будет описана; технология — какие конкретные рычаги переводят первое и второе в перепады видимости.</p>
+
+    <div class="levels">
+      <div class="level reveal">
+        <div class="tag"><span class="no">01</span><span>Структурный уровень</span></div>
+        <div class="body">
+          <h3>Иллюзорный плюрализм</h3>
+          <p>Производителей контента — миллионы, но инфраструктура его распределения предельно узка и централизована. Решение о том, какие голоса получат алгоритмическое усиление, остается за узкой группой владельцев площадок. Плюрализм производства не превращается в плюрализм видимости автоматически.</p>
+          <div class="chips">
+            <i>приватизация публичной сферы</i>
+            <i>код как инфраструктура видимости</i>
+            <i class="b">хрупкость цифровой харизмы</i>
+          </div>
+        </div>
+      </div>
+
+      <div class="level reveal">
+        <div class="tag"><span class="no">02</span><span>Дискурсивный уровень</span></div>
+        <div class="body">
+          <h3>Нарративы и рамки восприятия</h3>
+          <p>Семантически широкие слова — «свобода слова», «цензура» — работают как «пустое означающее» (Лакло): они склеивают разнородные аудитории в единую антиэлитную идентичность. Возмущение оказывается не побочным эффектом, а структурным условием алгоритмического успеха нарратива.</p>
+          <div class="chips">
+            <i>«пустое означающее»</i>
+            <i>антиэлитный нарратив</i>
+            <i class="b">+20% к распространению за каждое «моральное» слово</i>
+          </div>
+        </div>
+      </div>
+
+      <div class="level reveal">
+        <div class="tag"><span class="no">03</span><span>Технологический уровень</span></div>
+        <div class="body">
+          <h3>Три класса инструментов видимости</h3>
+          <p>В отличие от бинарной редакционной цензуры (опубликовать или нет), алгоритмическая модерация градиентна: она оперирует непрерывной шкалой видимости — от искусственного усиления охвата до теневой блокировки без формального удаления.</p>
+          <div class="chips">
+            <i>градиентная модерация: усиление и теневая блокировка</i>
+            <i>архитектурная сегрегация потоков</i>
+            <i class="b">адресная доставка · микротаргетинг</i>
+          </div>
+        </div>
+      </div>
+
+      <div class="result reveal">
+        <div class="rt">Итог всех трех уровней</div>
+        <h3>Монопольное распоряжение политической видимостью — а значит, и авторитетом</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ДВЕ МОДЕЛИ ===== -->
+<section id="models">
   <div class="wrap">
     <div class="sec-tag reveal">Две модели власти над вниманием</div>
     <h2 class="reveal">Один и тот же эффект — двумя противоположными способами</h2>
@@ -544,13 +1114,13 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
   </div>
 </section>
 
-<!-- ===== MATRIX ===== -->
-<section>
+<!-- ===== МАТРИЦА ===== -->
+<section id="matrix">
   <div class="wrap">
     <div class="sec-tag reveal">Сравнительная матрица</div>
     <h2 class="reveal">Семь измерений типологического различия</h2>
     <p class="lead reveal">Каждое измерение описывает один аспект осуществления власти площадки. Вместе они образуют сетку, по которой можно оценить любую конфигурацию цифровой медиавласти.</p>
-    <div class="matrix reveal">
+    <div class="matrix reveal" id="matrixScroll">
       <table>
         <thead>
           <tr>
@@ -570,11 +1140,12 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
         </tbody>
       </table>
     </div>
+    <div class="scrollhint reveal" id="matrixHint">таблица листается вбок</div>
   </div>
 </section>
 
-<!-- ===== STATISTICS ===== -->
-<section>
+<!-- ===== СТАТИСТИКА ===== -->
+<section id="stats">
   <div class="wrap">
     <div class="sec-tag reveal">Статистический разбор</div>
     <h2 class="reveal">Цифры, на которых держатся выводы</h2>
@@ -582,33 +1153,42 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
 
     <div class="charts">
 
-      <!-- ГРУППА X -->
+      <!-- ===== ГРУППА X ===== -->
       <div class="statband x reveal"><span class="bp">Площадка X</span> · персоналистская модель · И. Маск</div>
+
+      <!-- НОВАЯ КАРТОЧКА. Наследованная асимметрия (Хусар, PNAS 2022) -->
+      <div class="card bignum seg-x reveal">
+        <div class="ct">Случай X · исходная точка</div>
+        <div class="huge dark">6/7<small>стран</small></div>
+        <div class="cap">Еще <b>до прихода Маска</b> алгоритм усиливал охваты правоцентристских партий относительно левоцентристских в 6 из 7 исследованных стран (рандомизированный эксперимент, ~2 млн аккаунтов). Новый собственник радикализировал встроенный уклон, а не создал его.</div>
+        <div class="src">Источник: Хусар Ф. и соавт. PNAS, 2022 (внутренние данные Twitter до смены собственника)</div>
+      </div>
 
       <!-- 1. Алгоритмическое усиление -->
       <div class="card seg-x reveal">
         <div class="ct">Случай X · алгоритм</div>
         <h3>Прирост охвата владельца против остальных</h3>
-        <svg viewBox="0 0 440 240" role="img" aria-label="Сравнение прироста просмотров и распространения">
+        <!-- Столбцам присвоен класс .bar — они «вырастают» при появлении карточки -->
+        <svg viewBox="0 0 440 248" role="img" aria-label="Сравнение прироста просмотров и распространения: аккаунт владельца против прочих">
           <line x1="50" y1="200" x2="430" y2="200" stroke="#333333" stroke-width="1"/>
           <g stroke="#cccccc" stroke-width="1">
             <line x1="50" y1="150" x2="430" y2="150"/><line x1="50" y1="100" x2="430" y2="100"/><line x1="50" y1="50" x2="430" y2="50"/>
           </g>
-          <g font-family="IBM Plex Mono" font-size="9" fill="#333333" text-anchor="end">
+          <g font-family="IBM Plex Mono" font-size="10" fill="#333333" text-anchor="end">
             <text x="44" y="203">0</text><text x="44" y="153">80</text><text x="44" y="103">160</text><text x="44" y="53">240</text>
           </g>
-          <rect x="80" y="113.6" width="46" height="86.4" fill="#333333"/>
-          <rect x="132" y="164.4" width="46" height="35.6" fill="url(#hatch)"/>
-          <text x="103" y="106" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">+138%</text>
-          <text x="155" y="157" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">+57%</text>
-          <text x="129" y="222" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">Просмотры</text>
-          <rect x="262" y="51.3" width="46" height="148.7" fill="#333333"/>
-          <rect x="314" y="104.9" width="46" height="95.1" fill="url(#hatch)"/>
-          <text x="285" y="44" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">+238%</text>
-          <text x="337" y="97" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">+152%</text>
-          <text x="311" y="222" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">Распространение</text>
-          <rect x="80" y="232" width="12" height="8" fill="#333333"/><text x="97" y="239" font-family="IBM Plex Mono" font-size="9.5" fill="#333333">аккаунт владельца</text>
-          <rect x="240" y="232" width="12" height="8" fill="url(#hatch)"/><text x="257" y="239" font-family="IBM Plex Mono" font-size="9.5" fill="#333333">прочие аккаунты</text>
+          <rect class="bar" x="80" y="113.6" width="46" height="86.4" fill="#333333"/>
+          <rect class="bar" x="132" y="164.4" width="46" height="35.6" fill="url(#hatch)" stroke="#333333" stroke-width="1"/>
+          <text x="103" y="106" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#333333">+138%</text>
+          <text x="155" y="157" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#333333">+57%</text>
+          <text x="129" y="222" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#333333">Просмотры</text>
+          <rect class="bar" x="262" y="51.3" width="46" height="148.7" fill="#333333"/>
+          <rect class="bar" x="314" y="104.9" width="46" height="95.1" fill="url(#hatch)" stroke="#333333" stroke-width="1"/>
+          <text x="285" y="44" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#333333">+238%</text>
+          <text x="337" y="97" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#333333">+152%</text>
+          <text x="311" y="222" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#333333">Распространение</text>
+          <rect x="80" y="234" width="12" height="8" fill="#333333"/><text x="97" y="241" font-family="IBM Plex Mono" font-size="10" fill="#333333">аккаунт владельца</text>
+          <rect x="240" y="234" width="12" height="8" fill="url(#hatch)" stroke="#333333" stroke-width="1"/><text x="257" y="241" font-family="IBM Plex Mono" font-size="10" fill="#333333">прочие аккаунты</text>
         </svg>
         <p class="note">Метод разности разностей: дополнительный прирост аккаунта владельца — около <b style="color:var(--ink)">6,4 млн просмотров в день</b> сверх общего роста по выборке. Структурный разрыв зафиксирован около 13 июля 2024 года.</p>
         <div class="src">Источник: Грэм Т., Андреевич М. Анализ структурных разрывов (метод CUSUM, 56 184 публикации). QUT, 2024</div>
@@ -618,30 +1198,31 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
       <div class="card seg-x reveal">
         <div class="ct">Случай X · вирусность</div>
         <h3>Просмотры отдельных записей, июль 2024</h3>
+        <!-- Горизонтальные полосы (.barh) растут слева направо -->
         <svg viewBox="0 0 440 240" role="img" aria-label="Просмотры записей в миллионах">
           <g font-family="IBM Plex Mono" font-size="11" fill="#333333" text-anchor="end">
-            <text x="142" y="38">Поддержка</text>
-            <text x="142" y="86">«TRUMP VANCE»</text>
-            <text x="142" y="134">Критика СМИ</text>
-            <text x="142" y="182">Эфир в Spaces*</text>
+            <text x="142" y="40">Поддержка</text>
+            <text x="142" y="88">«TRUMP VANCE»</text>
+            <text x="142" y="136">Критика СМИ</text>
+            <text x="142" y="184">Эфир в Spaces*</text>
           </g>
-          <rect x="150" y="26" width="280" height="20" fill="#333333"/>
-          <rect x="150" y="74" width="102.5" height="20" fill="#333333"/>
-          <rect x="150" y="122" width="73.75" height="20" fill="#333333"/>
-          <rect x="150" y="170" width="105" height="20" fill="url(#hatch)"/>
+          <rect class="barh" x="150" y="26" width="280" height="20" fill="#333333"/>
+          <rect class="barh" x="150" y="74" width="102.5" height="20" fill="#333333"/>
+          <rect class="barh" x="150" y="122" width="73.75" height="20" fill="#333333"/>
+          <rect class="barh" x="150" y="170" width="105" height="20" fill="url(#hatch)" stroke="#333333" stroke-width="1"/>
           <g font-family="IBM Plex Mono" font-size="11" fill="#333333">
-            <text x="436" y="41" text-anchor="end" fill="#FFFFFF" font-weight="600">224 млн</text>
+            <text x="424" y="41" text-anchor="end" fill="#FFFFFF" font-weight="600">224 млн</text>
             <text x="258" y="89">82 млн</text>
             <text x="229" y="137">59 млн</text>
             <text x="261" y="185">73–95 млн</text>
           </g>
-          <text x="150" y="222" font-family="IBM Plex Mono" font-size="9" fill="#333333">* совокупный охват записи и перепубликаций в первые дни</text>
+          <text x="150" y="222" font-family="IBM Plex Mono" font-size="9.5" fill="#333333">* совокупный охват записи и перепубликаций в первые дни</text>
         </svg>
         <p class="note">Одна запись с поддержкой — <b style="color:var(--ink)">2,21 млн отметок «нравится», 335 тыс. распространений</b>: одна из самых вовлекающих в истории площадки.</p>
         <div class="src">Источник: метрики площадки X, июль 2024; приведено в: Грэм Т., Андреевич М., 2024</div>
       </div>
 
-      <!-- НОВОЕ. Кому достался прирост -->
+      <!-- 3. Кому достался прирост -->
       <div class="card seg-x reveal">
         <div class="ct">Случай X · группы аккаунтов</div>
         <h3>Кому достался дополнительный охват</h3>
@@ -650,13 +1231,13 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
             <text x="150" y="55">Республиканские</text>
             <text x="150" y="115">Демократические</text>
           </g>
-          <rect x="160" y="38" width="252" height="26" fill="#333333"/>
-          <rect x="160" y="98" width="7" height="26" fill="url(#hatch)"/>
+          <rect class="barh" x="160" y="38" width="252" height="26" fill="#333333"/>
+          <rect class="barh" x="160" y="98" width="7" height="26" fill="url(#hatch)" stroke="#333333" stroke-width="1"/>
           <g font-family="IBM Plex Mono" font-size="12">
             <text x="172" y="56" fill="#FFFFFF" font-weight="600">+952 тыс. в день</text>
             <text x="176" y="116" fill="#333333">≈ 0 · незначимо</text>
           </g>
-          <text x="160" y="158" font-family="IBM Plex Mono" font-size="9.5" fill="#333333">эффект значим только по просмотрам (p = 0,021)</text>
+          <text x="160" y="158" font-family="IBM Plex Mono" font-size="10" fill="#333333">эффект значим только по просмотрам (p = 0,021)</text>
         </svg>
         <p class="note">Дополнительное усиление получили именно <b style="color:var(--ink)">республикански-ориентированные аккаунты</b> — отдельно от общего роста охватов и только по просмотрам. Это указывает на вмешательство на уровне ленты рекомендаций «Для вас».</p>
         <div class="src">Источник: Грэм Т., Андреевич М. Анализ структурных разрывов. QUT, 2024</div>
@@ -666,53 +1247,59 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
       <div class="card seg-x reveal">
         <div class="ct">Случай X · ноябрь 2022</div>
         <h3>Опрос о восстановлении аккаунта</h3>
-        <svg viewBox="0 0 440 200" role="img" aria-label="Результат опроса 51,8 процента за">
+        <!-- Кольцевая диаграмма: длина окружности r=68 равна 427,3;
+             доля 51,8% = дуга 221,3. Класс .arc анимирует прорисовку дуги. -->
+        <svg viewBox="0 0 440 200" role="img" aria-label="Результат опроса: 51,8 процента за восстановление">
           <g transform="translate(110,100)">
             <circle r="68" fill="none" stroke="url(#hatch)" stroke-width="22"/>
-            <circle r="68" fill="none" stroke="#333333" stroke-width="22"
-              stroke-dasharray="221.3 427.3" stroke-dashoffset="0" transform="rotate(-90)"/>
-            <text x="0" y="2" text-anchor="middle" font-family="IBM Plex Mono" font-weight="900" font-size="34" fill="#333333">51,8%</text>
+            <circle class="arc" r="68" fill="none" stroke="#333333" stroke-width="22"
+              stroke-dasharray="221.3 427.3" transform="rotate(-90)"/>
+            <text x="0" y="2" text-anchor="middle" font-family="IBM Plex Mono" font-weight="700" font-size="32" fill="#333333">51,8%</text>
             <text x="0" y="24" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#333333">за восстановление</text>
           </g>
           <g transform="translate(230,60)" font-family="IBM Plex Mono" font-size="13">
             <rect x="0" y="-10" width="12" height="12" fill="#333333"/>
             <text x="22" y="0" fill="#333333">7,81 млн — «за»</text>
-            <rect x="0" y="26" width="12" height="12" fill="url(#hatch)"/>
+            <rect x="0" y="26" width="12" height="12" fill="url(#hatch)" stroke="#333333" stroke-width="1"/>
             <text x="22" y="36" fill="#333333">&#8776; 7,2 млн — «против»</text>
-            <text x="0" y="78" font-family="IBM Plex Mono" font-size="11" fill="#333333">всего &gt; 15 000 000 голосов</text>
-            <text x="0" y="100" font-family="IBM Plex Mono" font-size="10" fill="#333333">оформлено как «воля народа»</text>
+            <text x="0" y="78" font-size="11" fill="#333333">всего &gt; 15 000 000 голосов</text>
+            <text x="0" y="100" font-size="10" fill="#333333">оформлено как «воля народа»</text>
           </g>
         </svg>
         <div class="src">Источник: опрос на площадке X (Vox Populi), 19 ноября 2022</div>
       </div>
 
-      <!-- ГРУППА META -->
+      <!-- ===== ГРУППА META ===== -->
       <div class="statband meta reveal"><span class="bp">Экосистема Meta</span> · институциональная модель · М. Цукерберг</div>
 
-      <!-- 3. Асимметрия рекламы -->
+      <!-- 5. Асимметрия рекламы -->
       <div class="card span2 seg-meta reveal">
         <div class="ct">Случай Meta · кампания 2016</div>
         <h3>Асимметрия рекламного производства: Трамп против Клинтон</h3>
         <div class="ratiorow" style="margin-top:24px">
           <div class="rl"><span>Кампания Трампа</span><b>5 900 000 рекламных единиц</b></div>
-          <div class="rbar"><span style="width:100%;background:linear-gradient(90deg,#333333,#333333)"></span></div>
+          <div class="rbar"><span style="width:100%;background:#333333"></span></div>
         </div>
         <div class="ratiorow">
           <div class="rl"><span>Кампания Клинтон</span><b>&#8776; 66 000 единиц</b></div>
           <div class="rbar"><span style="width:1.1%;background:#004F9F;min-width:4px"></span></div>
         </div>
-        <p class="note">Разрыв — примерно <b style="color:var(--ink)">в 89 раз</b>. Расходы на площадке за июнь–ноябрь 2016 — около 44 млн долларов; в одном задокументированном случае 328 тыс. долларов рекламы принесли 1,32 млн долларов пожертвований за день.</p>
-        <div class="src">Источник: The New Yorker; The Atlantic, 2017 (операция «Project Alamo»)</div>
+        <div class="ratiorow">
+          <div class="rl"><span>Пиковая «фабрика вариантов» · день третьих дебатов</span><b>до 175 000 вариантов рекламы за сутки</b></div>
+          <div class="rbar"><span style="width:64%;background:url(#hatch);background:repeating-linear-gradient(45deg,#333 0 4px,#fff 4px 9px)"></span></div>
+        </div>
+        <p class="note">Разрыв — примерно <b style="color:var(--ink)">в 89 раз</b>. В обычный день операция «Project Alamo» генерировала и тестировала 40–60 тыс. вариантов рекламы. Расходы на площадке за июнь–ноябрь 2016 — около 44 млн долларов; в одном задокументированном случае 328 тыс. долларов рекламы принесли 1,32 млн долларов пожертвований за день.</p>
+        <div class="src">Источник: The New Yorker; The Atlantic, 2017; Г. Коби (WIRED); Б. Парскейл (CBS) — операция «Project Alamo»</div>
       </div>
 
-      <!-- 5. Эффект отключения -->
+      <!-- 6. Эффект отключения -->
       <div class="card seg-meta reveal">
         <div class="ct">Случай Meta · эффект отключения</div>
         <h3>Дискуссия об «избирательном мошенничестве» за неделю</h3>
         <svg viewBox="0 0 440 200" role="img" aria-label="Падение объема дискуссии на 73 процента">
           <line x1="40" y1="160" x2="420" y2="160" stroke="#333333" stroke-width="1"/>
-          <rect x="90" y="40" width="90" height="120" fill="url(#hatch)"/>
-          <rect x="270" y="127.6" width="90" height="32.4" fill="#004F9F"/>
+          <rect class="bar" x="90" y="40" width="90" height="120" fill="url(#hatch)" stroke="#333333" stroke-width="1"/>
+          <rect class="bar" x="270" y="127.6" width="90" height="32.4" fill="#004F9F"/>
           <text x="135" y="32" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#333333">100%</text>
           <text x="315" y="120" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="#333333">27%</text>
           <text x="135" y="178" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333">до ограничений</text>
@@ -724,7 +1311,7 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
         <div class="src">Источник: Zignal Labs; The Washington Post, 2021</div>
       </div>
 
-      <!-- 6. 87 млн профилей -->
+      <!-- 7. 87 млн профилей -->
       <div class="card bignum seg-meta reveal">
         <div class="ct">Случай Meta · данные</div>
         <div class="huge">87<small>млн</small></div>
@@ -732,19 +1319,19 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
         <div class="src">Источник: Кэдваллэдр К., Грэм-Харрисон Э. The Guardian, 2018</div>
       </div>
 
-      <!-- ГРУППА КОНТЕКСТ -->
+      <!-- ===== ГРУППА КОНТЕКСТ ===== -->
       <div class="statband ctx reveal"><span class="bp">Общий контекст</span> · последствия и механизмы для обеих моделей</div>
 
-      <!-- 7. Фрагментация -->
+      <!-- 8. Фрагментация -->
       <div class="card reveal">
         <div class="ct">Контекст · после отключений</div>
         <h3>Лишь 6 из 100 взрослых регулярно читают новости на альтернативных площадках</h3>
-        <div class="dotgrid" id="dg"></div>
+        <div class="dotgrid" id="dg" role="img" aria-label="6 из 100 точек закрашены"></div>
         <p class="note">Переход аудитории на альтернативные площадки оказался ограниченным: фрагментация не возмещает потерю доступа к крупной площадке.</p>
         <div class="src">Источник: Pew Research Center, 2022 (выборка — 10 188 совершеннолетних граждан США)</div>
       </div>
 
-      <!-- 8. Моральные эмоции -->
+      <!-- 9. Моральные эмоции -->
       <div class="card bignum reveal">
         <div class="ct">Механизм · моральные эмоции</div>
         <div class="huge">+20<small>%</small></div>
@@ -756,27 +1343,71 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
   </div>
 </section>
 
+<!-- ===== НОВЫЙ БЛОК · РУЧНОЙ ПЕРЕКЛЮЧАТЕЛЬ УСИЛЕНИЯ ===== -->
+<section id="switch">
+  <div class="wrap">
+    <div class="sec-tag reveal">Механика усиления · случай X</div>
+    <h2 class="reveal">Один символ — миллионы просмотров</h2>
+    <p class="lead reveal">Анализ взаимодействий аккаунта владельца за январь–ноябрь 2024 года выявил устойчивую сеть аккаунтов, систематически получавших усиление через его ответы и цитирования. Механика минималистична — и именно поэтому показательна: личная активность собственника работает как ручной переключатель алгоритма.</p>
+
+    <div class="switchgrid">
+      <div class="sw reveal">
+        <div class="st">Шаг 01 · вход</div>
+        <h4>Пост идеологически близкого аккаунта</h4>
+        <p>Среди систематически усиливаемых — аккаунты единого правопопулистского и антиэлитарного кластера:</p>
+        <div class="chips" style="margin-top:12px">
+          <i>@EndWokeness</i><i>@libsoftiktok</i><i>@JackPosobiec</i><i>@DC_Draino</i><i>@realchrisrufo</i>
+        </div>
+      </div>
+      <div class="sw dark reveal">
+        <div class="st">Шаг 02 · переключатель</div>
+        <h4>Минимальный ответ владельца</h4>
+        <p>Достаточно одного слова или знака:</p>
+        <div class="keys">
+          <b>«True»</b><b>«!»</b><b>«!!»</b><b>«Exactly»</b>
+        </div>
+      </div>
+      <div class="sw reveal">
+        <div class="st">Шаг 03 · алгоритм</div>
+        <h4>Сигнал высокой релевантности</h4>
+        <p>Ответ самого заметного аккаунта площадки алгоритм считывает как доказательство ценности исходной записи — и резко повышает ее приоритет в ранжировании.</p>
+      </div>
+      <div class="sw blue reveal">
+        <div class="st">Шаг 04 · выход</div>
+        <h4>Лента «Для вас»: до десятков миллионов дополнительных просмотров</h4>
+        <p>Видимость исходного поста умножается без рекламы, без пометок и без формального редакционного решения.</p>
+      </div>
+    </div>
+
+    <div class="swnote reveal">
+      Вывод параграфа 3.1: личная активность владельца функционирует как <b>ручной переключатель алгоритмического усиления</b> для определенного идеологического кластера. Редактором здесь выступает не редакция и не правило — а одно нажатие клавиши собственника инфраструктуры.
+    </div>
+  </div>
+</section>
+
 <!-- ===== БЕГУЩАЯ СТРОКА (синяя) ===== -->
 <div class="marquee blue rev"><div class="track">
 <span>Видимость = условие признания</span><span>Кто владеет площадкой — владеет вниманием</span><span>Авторитет отзываем одним решением собственника</span><span>Алгоритм решает, кого слышно</span><span>Площадка как квазиконституция</span><span>Магнат как сетевой переключатель</span><span>Институция и личность сходятся в структуре</span><span>Нет видимости — нет субъектности</span><span>Публичная сфера в частных руках</span>
-<span>Видимость = условие признания</span><span>Кто владеет площадкой — владеет вниманием</span><span>Авторитет отзываем одним решением собственника</span><span>Алгоритм решает, кого слышно</span><span>Площадка как квазиконституция</span><span>Магнат как сетевой переключатель</span><span>Институция и личность сходятся в структуре</span><span>Нет видимости — нет субъектности</span><span>Публичная сфера в частных руках</span>
+<span aria-hidden="true">Видимость = условие признания</span><span aria-hidden="true">Кто владеет площадкой — владеет вниманием</span><span aria-hidden="true">Авторитет отзываем одним решением собственника</span><span aria-hidden="true">Алгоритм решает, кого слышно</span><span aria-hidden="true">Площадка как квазиконституция</span><span aria-hidden="true">Магнат как сетевой переключатель</span><span aria-hidden="true">Институция и личность сходятся в структуре</span><span aria-hidden="true">Нет видимости — нет субъектности</span><span aria-hidden="true">Публичная сфера в частных руках</span>
 </div></div>
 
-<!-- ===== PULLQUOTE ===== -->
+<!-- ===== ЦИТАТА ===== -->
 <div class="pull">
   <div class="wrap">
     <blockquote class="reveal">Харизма перестает быть личным ресурсом политика и становится переменной, которой управляет владелец площадки</blockquote>
   </div>
 </div>
 
-<!-- ===== TIMELINE ===== -->
-<section>
+<!-- ===== ТАЙМЛАЙН ===== -->
+<section id="timeline">
   <div class="wrap">
     <div class="sec-tag reveal">Постоянная величина исследования</div>
     <h2 class="reveal">Кривая видимости одной фигуры</h2>
     <p class="lead reveal">Д. Трамп выступает методологической константой: один и тот же политик прошел через конструирование, разрушение и узаконенное восстановление видимости — решениями разных собственников. Линия ниже читает эту траекторию как перепад политического авторитета во времени.</p>
-    <div class="lead reveal" style="margin-top:0">&nbsp;</div>
     <div class="curvewrap reveal">
+      <!-- На мобильных график не сжимается, а листается вбок:
+           min-width у SVG + горизонтальный скролл контейнера. -->
+      <div class="curvescroll">
       <svg viewBox="0 0 1080 380" role="img" aria-label="Кривая политической видимости Трампа во времени">
         <defs>
           <linearGradient id="fillMeta" x1="0" y1="0" x2="0" y2="1">
@@ -787,66 +1418,60 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
           </linearGradient>
         </defs>
 
-        <!-- period background zones -->
+        <!-- фоновые зоны периодов -->
         <rect x="70" y="20" width="470" height="290" fill="#004F9F" opacity=".05"/>
         <rect x="540" y="20" width="470" height="290" fill="#333333" opacity=".05"/>
         <line x1="540" y1="20" x2="540" y2="310" stroke="#333333" stroke-width="1" stroke-dasharray="4 4"/>
         <text x="305" y="42" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#004F9F" letter-spacing="2">ЭПОХА META · 2016—2021</text>
         <text x="775" y="42" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333" letter-spacing="2">ЭПОХА X · 2022—2024</text>
 
-        <!-- y axis hint -->
+        <!-- ось Y -->
         <text x="60" y="70" text-anchor="end" font-family="IBM Plex Mono" font-size="9" fill="#333333">высокая</text>
         <text x="60" y="305" text-anchor="end" font-family="IBM Plex Mono" font-size="9" fill="#333333">ноль</text>
         <line x1="70" y1="60" x2="70" y2="310" stroke="url(#hatch)" stroke-width="1"/>
         <line x1="70" y1="310" x2="1010" y2="310" stroke="#333333" stroke-width="1"/>
         <text x="40" y="190" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#333333" transform="rotate(-90 40 190)" letter-spacing="2">ВИДИМОСТЬ / АВТОРИТЕТ</text>
 
-        <!-- Meta-era area + line: 2016 rise -> Jan21 crash -> May21 flat low -->
-        <path d="M110,210 C190,140 240,120 300,110 L300,110 C330,108 360,112 390,120 L390,120 L408,300 C430,300 470,300 500,300 L520,298"
+        <!-- эпоха Meta: рост 2016 → обрыв янв 2021 → плато -->
+        <path d="M110,210 C190,140 240,120 300,110 C330,108 360,112 390,120 L408,300 C430,300 470,300 500,300 L520,298"
               fill="none" stroke="#004F9F" stroke-width="2.5"/>
         <path d="M110,210 C190,140 240,120 300,110 C330,108 360,112 390,120 L408,300 C430,300 470,300 500,300 L520,298 L520,310 L110,310 Z"
               fill="url(#fillMeta)"/>
-
-        <!-- crash drop marker -->
         <line x1="399" y1="120" x2="408" y2="300" stroke="#333333" stroke-width="2.5"/>
 
-        <!-- X-era: Nov22 jump -> 2024 high -->
+        <!-- эпоха X: скачок ноя 2022 → максимум 2024 -->
         <path d="M560,300 L575,300 C585,180 600,150 640,140 C720,120 820,95 960,80"
               fill="none" stroke="#333333" stroke-width="2.5"/>
         <path d="M560,300 L575,300 C585,180 600,150 640,140 C720,120 820,95 960,80 L960,310 L560,310 Z"
               fill="url(#fillX)"/>
         <line x1="575" y1="300" x2="585" y2="175" stroke="#333333" stroke-width="2.5"/>
 
-        <!-- event markers -->
+        <!-- маркеры событий -->
         <g font-family="IBM Plex Mono" font-size="10">
-          <!-- 2016 -->
           <circle cx="110" cy="210" r="5" fill="#004F9F"/>
           <text x="110" y="338" text-anchor="middle" fill="#333333">2016</text>
           <text x="110" y="352" text-anchor="middle" fill="#333333" font-size="9">конструирование</text>
-          <!-- Jan 2021 crash -->
           <circle cx="404" cy="300" r="5" fill="#333333"/>
           <text x="404" y="338" text-anchor="middle" fill="#333333">янв 2021</text>
           <text x="404" y="352" text-anchor="middle" fill="#333333" font-size="9">отключение</text>
-          <!-- May 2021 -->
           <circle cx="500" cy="300" r="4" fill="#004F9F"/>
           <text x="500" y="338" text-anchor="middle" fill="#333333">май 2021</text>
           <text x="500" y="352" text-anchor="middle" fill="#333333" font-size="9">узаконивание</text>
-          <!-- Nov 2022 jump -->
           <circle cx="580" cy="175" r="5" fill="#333333"/>
           <text x="588" y="338" text-anchor="middle" fill="#333333">ноя 2022</text>
           <text x="588" y="352" text-anchor="middle" fill="#333333" font-size="9">восстановление</text>
-          <!-- 2024 -->
           <circle cx="960" cy="80" r="5" fill="#333333"/>
           <text x="955" y="338" text-anchor="middle" fill="#333333">2024</text>
           <text x="955" y="352" text-anchor="middle" fill="#333333" font-size="9">симбиоз</text>
         </g>
 
-        <!-- callout for crash -->
+        <!-- выноски -->
         <text x="404" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-style="italic" font-weight="700" font-size="15" fill="#333333">обрыв доступа</text>
-        <!-- callout for Musk takeover -->
         <text x="636" y="104" text-anchor="middle" font-family="IBM Plex Mono" font-style="italic" font-weight="700" font-size="15" fill="#333333">приход Маска</text>
         <text x="636" y="122" text-anchor="middle" font-family="IBM Plex Mono" font-style="italic" font-weight="700" font-size="15" fill="#333333">к управлению</text>
       </svg>
+      </div>
+      <div class="scrollhint" id="curveHint">график листается вбок</div>
       <div class="legend">
         <span><i style="background:#004F9F"></i>период Meta — конструирование, разрушение, узаконивание</span>
         <span><i style="background:#333333"></i>период X — восстановление и симбиоз</span>
@@ -883,8 +1508,102 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
   </div>
 </section>
 
-<!-- ===== HYPOTHESES ===== -->
-<section>
+<!-- ===== НОВЫЙ БЛОК · АНАТОМИЯ ВЕЛИКОГО ДЕПЛАТФОРМИНГА ===== -->
+<section id="deplatforming">
+  <div class="wrap">
+    <div class="sec-tag reveal">Январь 2021 · пять дней</div>
+    <h2 class="reveal">Анатомия великого деплатформинга</h2>
+    <p class="lead reveal">За пять суток после штурма Капитолия действующий президент государства последовательно лишился доступа к своей аудитории — скоординированным, хотя формально независимым, действием нескольких корпораций. В литературе эта интервенция получила устойчивое имя «the Great Deplatforming». Ниже — ее хронология, масштаб и последствия.</p>
+
+    <div class="depl">
+
+      <!-- Панель 1: хронология -->
+      <div class="panel reveal">
+        <div class="pt">Хронология · 7—12 января 2021</div>
+        <h3>Пять решений пяти корпораций</h3>
+        <div class="ladder">
+          <div class="rung blue">
+            <div class="rd"><b>7 янв</b>Facebook* + Instagram*</div>
+            <div class="rw">Блокировка аккаунтов; решение принято лично Цукербергом, минуя стандартные процедуры, и обосновано языком «оценки рисков».</div>
+          </div>
+          <div class="rung">
+            <div class="rd"><b>8 янв</b>Twitter</div>
+            <div class="rw">Постоянная блокировка @realDonaldTrump. Попытка перенаправить коммуникацию через институциональный @POTUS (33,4 млн подписчиков) пресечена: публикации удалены.</div>
+          </div>
+          <div class="rung">
+            <div class="rd"><b>11 янв</b>Amazon Web Services</div>
+            <div class="rw">Отзыв хостинга у альтернативной площадки Parler — она фактически выведена из онлайн-пространства.</div>
+          </div>
+          <div class="rung">
+            <div class="rd"><b>12 янв</b>YouTube</div>
+            <div class="rw">Приостановка канала завершает синхронную интервенцию крупнейших инфраструктур.</div>
+          </div>
+          <div class="rung blue">
+            <div class="rd"><b>5 мая 2021</b>Надзорный совет Meta*</div>
+            <div class="rw">Квазисудебное решение (Case 2021-001-FB-FBR) частично подтверждает блокировку — частная власть узаконивает сама себя языком международного права.</div>
+          </div>
+        </div>
+        <div class="src">Источник: Reuters; AP; решение Надзорного совета Meta*, 2021</div>
+      </div>
+
+      <!-- Панель 2: масштаб аудитории -->
+      <div class="panel reveal">
+        <div class="pt">Масштаб · потерянная аудитория</div>
+        <h3>Подписки, отключенные одним решением собственников</h3>
+        <div class="abars">
+          <div class="abar">
+            <div class="al"><span>Twitter</span><b>&gt; 88 млн</b></div>
+            <div class="at"><span style="width:100%"></span></div>
+          </div>
+          <div class="abar blue">
+            <div class="al"><span>Facebook*</span><b>≈ 35 млн</b></div>
+            <div class="at"><span style="width:39.8%"></span></div>
+          </div>
+          <div class="abar blue">
+            <div class="al"><span>Instagram*</span><b>≈ 23 млн</b></div>
+            <div class="at"><span style="width:26.1%"></span></div>
+          </div>
+          <div class="abar">
+            <div class="al"><span>YouTube</span><b>≈ 2,6 млн</b></div>
+            <div class="at"><span style="width:3%"></span></div>
+          </div>
+        </div>
+        <div class="asum"><span class="big">≈ 149 млн</span><span>неуникальных подписок суммарно по четырем площадкам</span></div>
+        <p class="note">Оговорка работы: это прокси-оценка охвата, а не число уникальных пользователей — значительная часть аудитории подписана сразу на нескольких площадках.</p>
+        <div class="src">Источник: консолидированные данные Reuters и AP, 2021–2023</div>
+      </div>
+
+      <!-- Панель 3 (широкая): куда ушла аудитория -->
+      <div class="panel wide reveal">
+        <div class="pt">Последствия · перераспределение, а не исчезновение</div>
+        <h3>Куда ушла аудитория: всплеск Gab после 6 января</h3>
+        <div class="gab" role="img" aria-label="Число постов в день на Gab: 58 тысяч до, 129 тысяч на пике, 74 тысячи к апрелю">
+          <div class="gcol">
+            <div class="gv">58 тыс.</div>
+            <div class="gb" style="height:72px"></div>
+            <div class="gl">постов/день · до 6 января</div>
+          </div>
+          <div class="gcol">
+            <div class="gv">129 тыс.</div>
+            <div class="gb" style="height:160px"></div>
+            <div class="gl">пик · месяц после деплатформинга</div>
+          </div>
+          <div class="gcol">
+            <div class="gv">74 тыс.</div>
+            <div class="gb" style="height:92px"></div>
+            <div class="gl">к апрелю · все еще выше базового уровня</div>
+          </div>
+        </div>
+        <p class="note">Деплатформинг измеримо сократил мейнстримный охват (см. −73% выше), но аудитория не исчезла — она мигрировала в менее модерируемые и идеологически более плотные ниши. При этом мейнстримный масштаб там не воссоздается: регулярно читают новости на альтернативных площадках лишь 6% взрослых. Итоговая квалификация работы: деплатформинг — <b style="color:var(--ink)">акт перераспределения видимости с измеримыми издержками</b>, а не абсолютное устранение нежелательного дискурса.</p>
+        <div class="src">Источник: Бантейн и соавт., 2023 (временные ряды Gab); МакКейб и соавт. Nature, 2024; Pew Research Center, 2022</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== ГИПОТЕЗЫ ===== -->
+<section id="hypotheses">
   <div class="wrap">
     <div class="sec-tag reveal">Результат проверки</div>
     <h2 class="reveal">Пять гипотез — все подтверждены</h2>
@@ -916,24 +1635,24 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
         <div class="status"><span class="tick">✓</span> подтверждена с уточнением</div>
       </div>
       <div class="hyp reveal" style="display:flex;flex-direction:column;justify-content:center;border-style:dashed">
-        <div class="code" style="color:var(--accent2)">вывод</div>
+        <div class="code">вывод</div>
         <h4 style="font-style:italic">Различие риторики не отменяет совпадения структуры: оба механизма самоконтроля остаются зависимыми от своей корпорации.</h4>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===== STRUCTURAL INVARIANT ===== -->
-<section>
+<!-- ===== СТРУКТУРНЫЙ ИНВАРИАНТ ===== -->
+<section id="invariant">
   <div class="wrap">
     <div class="sec-tag reveal">Где сходятся обе модели</div>
     <h2 class="reveal">Структурный инвариант: шесть совпадений</h2>
     <p class="lead reveal">Семь измерений матрицы показывают, чем X и Meta различаются. Но по шести признакам обе модели совпадают — независимо от риторики собственника и устройства корпорации. Эти совпадения и образуют единое ядро цифровой медиавласти.</p>
     <div class="conv reveal">
       <div class="conv-head">
-        <span class="l"><i style="background:var(--accent)"></i>персоналистская · X</span>
+        <span class="l"><i style="background:#333333"></i>персоналистская · X</span>
         <span class="arrow">сходятся в &rarr;</span>
-        <span class="l"><i style="background:var(--gold)"></i>институциональная · Meta</span>
+        <span class="l"><i style="background:#004F9F"></i>институциональная · Meta</span>
       </div>
       <div class="conv-grid">
         <div class="conv-cell">
@@ -970,6 +1689,55 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
     </div>
   </div>
 </section>
+
+<!-- ===== НОВЫЙ БЛОК · РЕГУЛЯТОРНЫЙ ГОРИЗОНТ: DSA (H4) ===== -->
+<section id="dsa">
+  <div class="wrap">
+    <div class="sec-tag reveal">Гипотеза H4 · право против инварианта</div>
+    <h2 class="reveal">DSA: необходимый, но недостаточный ответ</h2>
+    <p class="lead reveal">Закон Европейского союза о цифровых услугах — первая системная институциональная реакция на описанные практики. Работа показывает: его эффективность типологически различна. Инструменты, бьющие точно в одну модель, почти не задевают другую.</p>
+
+    <div class="dsa">
+      <div class="dsa-intro reveal">
+        <div class="dt">Что вводит DSA (2022)</div>
+        <h3>Категория VLOP — очень больших онлайн-платформ</h3>
+        <p>Площадки с аудиторией свыше <b>45 млн пользователей в ЕС</b> обязаны: проходить независимый ежегодный аудит, оценивать системные риски, раскрывать принципы работы алгоритмов рекомендаций и предоставлять исследователям доступ к данным. И X, и платформы Meta* квалифицированы Еврокомиссией как VLOP.</p>
+      </div>
+
+      <div class="dsa-cols">
+        <div class="dsa-col meta reveal">
+          <div class="head">Против институциональной модели · Meta</div>
+          <div class="verdict">Типологически адекватен</div>
+          <ul>
+            <li>Инструментарий DSA направлен против непрозрачности — ключевой черты именно этой модели.</li>
+            <li>Внутренние документы, ранее бывшие коммерческой тайной, становятся предметом внешней верификации.</li>
+            <li>Механизмы микротаргетинга и архитектура рекомендательных систем — предмет обязательного раскрытия.</li>
+          </ul>
+        </div>
+        <div class="dsa-col x reveal">
+          <div class="head">Против персоналистской модели · X</div>
+          <div class="verdict">Слепое пятно</div>
+          <ul>
+            <li>Политическая позиция магната открыто декларирована — раскрытие алгоритмов не обнаруживает ничего, что не было бы и так заявлено.</li>
+            <li>Проблема не в установлении факта политической агентности (он самоочевиден), а в институциональном ответе на нее.</li>
+            <li>Нерешенным остается конфликт между «свободой слова», к которой апеллирует магнат, и равным доступом политиков к инфраструктуре.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="dsa-gaps reveal">
+        <div class="gt">Три открытых пробела регулирования</div>
+        <div class="row">
+          <div class="gap"><b>Географический</b><span>Действие DSA ограничено Европейским союзом — инфраструктура площадок глобальна.</span></div>
+          <div class="gap"><b>Кросс-платформенный</b><span>Скоординированные действия нескольких корпораций (как в январе 2021) не охвачены регулированием одной площадки.</span></div>
+          <div class="gap"><b>Легитимационный</b><span>Раскрытие алгоритма не отвечает на главный вопрос: откуда у собственника право на политически значимые решения без мандата.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ТЕОРЕТИЧЕСКАЯ ОПОРА ===== -->
 <section>
   <div class="wrap">
     <div class="sec-tag reveal">Теоретическая опора</div>
@@ -986,8 +1754,8 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
   </div>
 </section>
 
-<!-- ===== CONCLUSION ===== -->
-<section>
+<!-- ===== ВЫВОД ===== -->
+<section id="conclusion">
   <div class="wrap">
     <div class="sec-tag reveal">Вывод</div>
     <h2 class="reveal">Что показало сопоставление</h2>
@@ -1014,23 +1782,132 @@ footer .rule{width:80px;height:6px;background:#004F9F;margin:30px auto}
       Симачев Р. А. · Южный федеральный университет · Ростов-на-Дону · 2026<br>
       Кафедра регионалистики и евразийских исследований
     </div>
+    <a class="totop" href="#top">Наверх ↑</a>
   </div>
 </footer>
 
 <script>
-// dot grid 100 dots, 6 on
+/* ==================================================================
+   СКРИПТЫ. Четыре независимых модуля без внешних зависимостей.
+   Все «дорогие» операции (скролл) обернуты в requestAnimationFrame.
+   ================================================================== */
+
+/* Глобальный флаг: пользователь отключил анимации в системе.
+   В этом случае reveal-классы вешаются сразу, без наблюдателя. */
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ------------------------------------------------------------------
+   1. ПРОГРЕСС ЧТЕНИЯ
+   Считаем долю прокрученного документа (0…1) и пишем ее
+   в CSS-переменную --p; полоса масштабируется через transform —
+   браузер не пересчитывает макет, только композитинг.
+   ------------------------------------------------------------------ */
+(function(){
+  const bar=document.getElementById('pbar');
+  if(!bar)return;
+  let ticking=false;
+  function update(){
+    const h=document.documentElement;
+    const max=h.scrollHeight-h.clientHeight;
+    const p=max>0?(h.scrollTop||document.body.scrollTop)/max:0;
+    bar.style.setProperty('--p',p.toFixed(4));
+    ticking=false;
+  }
+  window.addEventListener('scroll',()=>{ if(!ticking){ticking=true;requestAnimationFrame(update);} },{passive:true});
+  update();
+})();
+
+/* ------------------------------------------------------------------
+   2. ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ (reveal) + ЛЕСЕНКА ЗАДЕРЖЕК
+   Каждому .reveal внутри одного родителя назначается задержка
+   index*60ms — соседние элементы появляются каскадом.
+   После срабатывания элемент снимается с наблюдения (экономия).
+   ------------------------------------------------------------------ */
+(function(){
+  const els=document.querySelectorAll('.reveal');
+  if(REDUCED){ els.forEach(el=>el.classList.add('in')); return; }
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  },{threshold:.12});
+  els.forEach(el=>{
+    const sib=[...el.parentElement.querySelectorAll(':scope > .reveal')];
+    el.style.animationDelay=(Math.max(sib.indexOf(el),0)*60)+'ms';
+    io.observe(el);
+  });
+  /* Hero показываем сразу после загрузки — без ожидания скролла. */
+  window.addEventListener('load',()=>{
+    document.querySelectorAll('.hero .reveal').forEach((el,i)=>{
+      el.style.animationDelay=(i*90)+'ms';
+      el.classList.add('in');
+    });
+  });
+})();
+
+/* ------------------------------------------------------------------
+   3. ТОЧЕЧНАЯ СЕТКА PEW (100 точек, 6 закрашены)
+   Генерируем точки и раздаем закрашенным каскадную задержку,
+   чтобы они «зажигались» по очереди при появлении карточки.
+   ------------------------------------------------------------------ */
 (function(){
   const dg=document.getElementById('dg');
-  if(dg){for(let i=0;i<100;i++){const d=document.createElement('i');if(i<6)d.className='on';dg.appendChild(d);}}
+  if(!dg)return;
+  for(let i=0;i<100;i++){
+    const d=document.createElement('i');
+    if(i<6){ d.className='on'; d.style.transitionDelay=(i*110)+'ms'; }
+    dg.appendChild(d);
+  }
 })();
-const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
-document.querySelectorAll('.reveal').forEach((el,i)=>{
-  const sib=[...el.parentElement.querySelectorAll(':scope > .reveal')];
-  el.style.animationDelay=(sib.indexOf(el)*60)+'ms';
-  io.observe(el);
-});
-// hero reveal on load
-window.addEventListener('load',()=>{document.querySelectorAll('.hero .reveal').forEach((el,i)=>{el.style.animationDelay=(i*90)+'ms';el.classList.add('in')})});
+
+/* ------------------------------------------------------------------
+   4. ПОДСКАЗКИ ГОРИЗОНТАЛЬНОЙ ПРОКРУТКИ (матрица, кривая)
+   Подсказка «листается вбок» гаснет после первого жеста прокрутки —
+   пользователь уже понял механику, текст больше не нужен.
+   ------------------------------------------------------------------ */
+(function(){
+  function bind(scrollerId,hintId){
+    const sc=document.getElementById(scrollerId);
+    const hint=document.getElementById(hintId);
+    if(!sc||!hint)return;
+    const scroller = sc.classList.contains('curvewrap') ? sc.querySelector('.curvescroll') : sc;
+    (scroller||sc).addEventListener('scroll',()=>hint.classList.add('off'),{passive:true,once:true});
+  }
+  bind('matrixScroll','matrixHint');
+  /* для кривой контейнер прокрутки — .curvescroll рядом с подсказкой */
+  const cs=document.querySelector('.curvescroll');
+  const ch=document.getElementById('curveHint');
+  if(cs&&ch)cs.addEventListener('scroll',()=>ch.classList.add('off'),{passive:true,once:true});
+})();
+
+/* ------------------------------------------------------------------
+   5. SCROLLSPY ДЛЯ НАВИГАЦИИ
+   Следим за секциями с id; ссылке текущего раздела даем класс .act.
+   rootMargin смещает «линию срабатывания» к верхней трети экрана —
+   подсветка переключается там, где читатель реально находится.
+   ------------------------------------------------------------------ */
+(function(){
+  const links=[...document.querySelectorAll('.nav a[data-spy]')];
+  if(!links.length)return;
+  const map=new Map(); // id секции -> ссылка
+  links.forEach(a=>map.set(a.getAttribute('href').slice(1),a));
+  const spy=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      const link=map.get(e.target.id);
+      if(!link)return;
+      if(e.isIntersecting){
+        links.forEach(a=>a.classList.remove('act'));
+        link.classList.add('act');
+        /* Подкручиваем ленту навигации, чтобы активный пункт был виден. */
+        link.scrollIntoView({block:'nearest',inline:'center',behavior:REDUCED?'auto':'smooth'});
+      }
+    });
+  },{rootMargin:'-30% 0px -60% 0px'});
+  map.forEach((_,id)=>{
+    const sec=document.getElementById(id);
+    if(sec)spy.observe(sec);
+  });
+})();
 </script>
 </body>
 </html>
