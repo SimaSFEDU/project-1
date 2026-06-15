@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Роль медиамагнатов в конструировании политического авторитета в условиях цифровой медиасреды — обзор магистерской диссертации. Сравнение моделей X (Маск) и Meta (Цукерберг).">
+<meta name="description" content="Роль медиамагнатов в конструировании политического авторитета в условиях цифровой медиасреды — обзор магистерской диссертации. Сравнение моделей X (Маск) и Meta* (Цукерберг).">
 <meta name="theme-color" content="#333333">
 <title>Медиамагнаты и политический авторитет — обзор исследования</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +26,7 @@
 :root{
   --bg:#FFFFFF;
   --ink:#333333;          /* угольный — X, персоналистская модель */
-  --gold:#004F9F;         /* синий  — Meta, институциональная модель */
+  --gold:#004F9F;         /* синий  — Meta*, институциональная модель */
 
   /* Жёсткая «печатная» тень. Через clamp() она автоматически
      уменьшается на телефонах (5px) и растёт до 8px на десктопе,
@@ -303,7 +303,7 @@ h2{
 .levels .result h3{margin-top:8px;font-weight:700;font-size:clamp(1.1rem,2.6vw,1.6rem);text-transform:uppercase;letter-spacing:-.02em}
 
 /* ================================================================
-   КЛЮЧ К МОДЕЛЯМ (X / META)
+   КЛЮЧ К МОДЕЛЯМ (X / META*)
    ================================================================ */
 .keysplit{margin-top:clamp(30px,5vw,44px);display:grid;grid-template-columns:1fr;border:3px solid #333}
 .keyside{padding:var(--space-card);display:flex;flex-direction:column;gap:7px}
@@ -661,7 +661,7 @@ h2{
 
 /* ================================================================
    НОВЫЙ БЛОК · «РЕГУЛЯТОРНЫЙ ГОРИЗОНТ: DSA» (гипотеза H4)
-   Две колонки покрытия (Meta-модель / X-модель) + три открытых
+   Две колонки покрытия (Meta*-модель / X-модель) + три открытых
    пробела регулирования. На мобайле колонки складываются.
    ================================================================ */
 .dsa{margin-top:clamp(32px,6vw,48px)}
@@ -838,6 +838,21 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
   .card svg .arc{stroke-dashoffset:0;transition:none}
   .progress i{transition:none}
 }
+/* ================================================================
+   ПОЧИНКА ГРАНИЦ ПЛИТОК НА ДЕСКТОПЕ (>=980px)
+   Фиксит сетки .theory (теория + корпус данных) и .conv-grid (инвариант).
+   ================================================================ */
+@media (min-width:980px){
+  .theory>.th,
+  .conv-grid>.conv-cell{
+    border-right:3px solid #333;
+    border-bottom:3px solid #333;
+  }
+  .theory>.th:nth-child(3n),
+  .conv-grid>.conv-cell:nth-child(3n){border-right:none}
+  .theory>.th:nth-last-child(-n+3),
+  .conv-grid>.conv-cell:nth-last-child(-n+3){border-bottom:none}
+}
 </style>
 </head>
 <body>
@@ -857,8 +872,9 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
   <a href="#timeline" data-spy>Таймлайн</a>
   <a href="#deplatforming" data-spy>Деплатформинг</a>
   <a href="#hypotheses" data-spy>Гипотезы</a>
+  <a href="#corpus" data-spy>Корпус данных</a>
   <a href="#invariant" data-spy>Инвариант</a>
-  <a href="#dsa" data-spy>DSA</a>
+  <a href="#dsa" data-spy>Закон о цифровых услугах</a>
   <a href="#conclusion" data-spy>Вывод</a>
 </nav>
 
@@ -902,7 +918,7 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
 
 <!-- ===== БЕГУЩАЯ СТРОКА (контент в дорожке продублирован для бесшовной петли) ===== -->
 <div class="marquee"><div class="track">
-<span>Медиамагнаты</span><span>Цифровая медиавласть</span><span>Алгоритмическая видимость</span><span>X · персоналистская модель</span><span>Meta · институциональная модель</span><span>Структурный инвариант</span><span>Приватизация публичной сферы</span><span>Символическое насилие</span><span>Власть переключения сетей</span><span>Цифровая харизма</span><span>Психографическое нацеливание</span><span>Лента рекомендаций «Для вас»</span><span>Случай Маска · X</span><span>Случай Цукерберга · Meta</span><span>Отзываемый авторитет</span><span aria-hidden="true">Медиамагнаты</span><span aria-hidden="true">Цифровая медиавласть</span><span aria-hidden="true">Алгоритмическая видимость</span><span aria-hidden="true">X · персоналистская модель</span><span aria-hidden="true">Meta · институциональная модель</span><span aria-hidden="true">Структурный инвариант</span><span aria-hidden="true">Приватизация публичной сферы</span><span aria-hidden="true">Символическое насилие</span><span aria-hidden="true">Власть переключения сетей</span><span aria-hidden="true">Цифровая харизма</span><span aria-hidden="true">Психографическое нацеливание</span><span aria-hidden="true">Лента рекомендаций «Для вас»</span><span aria-hidden="true">Случай Маска · X</span><span aria-hidden="true">Случай Цукерберга · Meta</span><span aria-hidden="true">Отзываемый авторитет</span>
+<span>Медиамагнаты</span><span>Цифровая медиавласть</span><span>Алгоритмическая видимость</span><span>X · персоналистская модель</span><span>Meta* · институциональная модель</span><span>Структурный инвариант</span><span>Приватизация публичной сферы</span><span>Символическое насилие</span><span>Власть переключения сетей</span><span>Цифровая харизма</span><span>Психографическое нацеливание</span><span>Лента рекомендаций «Для вас»</span><span>Случай Маска · X</span><span>Случай Цукерберга · Meta*</span><span>Отзываемый авторитет</span><span aria-hidden="true">Медиамагнаты</span><span aria-hidden="true">Цифровая медиавласть</span><span aria-hidden="true">Алгоритмическая видимость</span><span aria-hidden="true">X · персоналистская модель</span><span aria-hidden="true">Meta* · институциональная модель</span><span aria-hidden="true">Структурный инвариант</span><span aria-hidden="true">Приватизация публичной сферы</span><span aria-hidden="true">Символическое насилие</span><span aria-hidden="true">Власть переключения сетей</span><span aria-hidden="true">Цифровая харизма</span><span aria-hidden="true">Психографическое нацеливание</span><span aria-hidden="true">Лента рекомендаций «Для вас»</span><span aria-hidden="true">Случай Маска · X</span><span aria-hidden="true">Случай Цукерберга · Meta</span><span aria-hidden="true">Отзываемый авторитет</span>
 </div></div>
 
 <!-- ===== ПРОБЛЕМА / ЦЕПОЧКА ===== -->
@@ -1072,9 +1088,9 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
         <div class="kd">И. Маск — собственник действует как открытый политический субъект. Этим цветом отмечены все данные по X.</div>
       </div>
       <div class="keyside meta">
-        <div class="kp">Экосистема Meta</div>
+        <div class="kp">Экосистема Meta*</div>
         <div class="kh">Институциональная модель</div>
-        <div class="kd">М. Цукерберг — воля собственника скрыта за процедурами. Этим цветом отмечены все данные по Meta.</div>
+        <div class="kd">М. Цукерберг — воля собственника скрыта за процедурами. Этим цветом отмечены все данные по Meta*.</div>
       </div>
     </div>
     <div class="models">
@@ -1101,7 +1117,7 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
         </div>
         <div class="body">
           <h3>Корпоративно-институциональная</h3>
-          <div class="who">М. Цукерберг · экосистема Meta · 2016—2021</div>
+          <div class="who">М. Цукерберг · экосистема Meta* · 2016—2021</div>
           <p>Политическая воля скрыта за языком процедур и нейтральности: «оценка рисков», «стандарты», квазисудебные органы вместо открытых заявлений.</p>
           <ul>
             <li>Контроль через двойной класс акций при формальной публичности</li>
@@ -1126,7 +1142,7 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
           <tr>
             <th class="dim">Измерение</th>
             <th class="x">Маск · X</th>
-            <th class="m">Цукерберг · Meta</th>
+            <th class="m">Цукерберг · Meta*</th>
           </tr>
         </thead>
         <tbody>
@@ -1270,11 +1286,11 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
       </div>
 
       <!-- ===== ГРУППА META ===== -->
-      <div class="statband meta reveal"><span class="bp">Экосистема Meta</span> · институциональная модель · М. Цукерберг</div>
+      <div class="statband meta reveal"><span class="bp">Экосистема Meta*</span> · институциональная модель · М. Цукерберг</div>
 
       <!-- 5. Асимметрия рекламы -->
       <div class="card span2 seg-meta reveal">
-        <div class="ct">Случай Meta · кампания 2016</div>
+        <div class="ct">Случай Meta* · кампания 2016</div>
         <h3>Асимметрия рекламного производства: Трамп против Клинтон</h3>
         <div class="ratiorow" style="margin-top:24px">
           <div class="rl"><span>Кампания Трампа</span><b>5 900 000 рекламных единиц</b></div>
@@ -1294,7 +1310,7 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
 
       <!-- 6. Эффект отключения -->
       <div class="card seg-meta reveal">
-        <div class="ct">Случай Meta · эффект отключения</div>
+        <div class="ct">Случай Meta* · эффект отключения</div>
         <h3>Дискуссия об «избирательном мошенничестве» за неделю</h3>
         <svg viewBox="0 0 440 200" role="img" aria-label="Падение объема дискуссии на 73 процента">
           <line x1="40" y1="160" x2="420" y2="160" stroke="#333333" stroke-width="1"/>
@@ -1313,7 +1329,7 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
 
       <!-- 7. 87 млн профилей -->
       <div class="card bignum seg-meta reveal">
-        <div class="ct">Случай Meta · данные</div>
+        <div class="ct">Случай Meta* · данные</div>
         <div class="huge">87<small>млн</small></div>
         <div class="cap">профилей пользователей получены без их ведома и использованы для психографического нацеливания в кампании 2016 года и кампании референдума.</div>
         <div class="src">Источник: Кэдваллэдр К., Грэм-Харрисон Э. The Guardian, 2018</div>
@@ -1422,7 +1438,7 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
         <rect x="70" y="20" width="470" height="290" fill="#004F9F" opacity=".05"/>
         <rect x="540" y="20" width="470" height="290" fill="#333333" opacity=".05"/>
         <line x1="540" y1="20" x2="540" y2="310" stroke="#333333" stroke-width="1" stroke-dasharray="4 4"/>
-        <text x="305" y="42" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#004F9F" letter-spacing="2">ЭПОХА META · 2016—2021</text>
+        <text x="305" y="42" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#004F9F" letter-spacing="2">ЭПОХА META* · 2016—2021</text>
         <text x="775" y="42" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#333333" letter-spacing="2">ЭПОХА X · 2022—2024</text>
 
         <!-- ось Y -->
@@ -1432,7 +1448,7 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
         <line x1="70" y1="310" x2="1010" y2="310" stroke="#333333" stroke-width="1"/>
         <text x="40" y="190" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#333333" transform="rotate(-90 40 190)" letter-spacing="2">ВИДИМОСТЬ / АВТОРИТЕТ</text>
 
-        <!-- эпоха Meta: рост 2016 → обрыв янв 2021 → плато -->
+        <!-- эпоха Meta*: рост 2016 → обрыв янв 2021 → плато -->
         <path d="M110,210 C190,140 240,120 300,110 C330,108 360,112 390,120 L408,300 C430,300 470,300 500,300 L520,298"
               fill="none" stroke="#004F9F" stroke-width="2.5"/>
         <path d="M110,210 C190,140 240,120 300,110 C330,108 360,112 390,120 L408,300 C430,300 470,300 500,300 L520,298 L520,310 L110,310 Z"
@@ -1473,7 +1489,7 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
       </div>
       <div class="scrollhint" id="curveHint">график листается вбок</div>
       <div class="legend">
-        <span><i style="background:#004F9F"></i>период Meta — конструирование, разрушение, узаконивание</span>
+        <span><i style="background:#004F9F"></i>период Meta* — конструирование, разрушение, узаконивание</span>
         <span><i style="background:#333333"></i>период X — восстановление и симбиоз</span>
       </div>
 
@@ -1481,17 +1497,17 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
         <div class="tlc meta">
           <div class="d">2016</div>
           <div class="t">Конструирование</div>
-          <div class="pl">Meta · инфраструктура кампании</div>
+          <div class="pl">Meta* · инфраструктура кампании</div>
         </div>
         <div class="tlc meta">
           <div class="d">январь 2021</div>
           <div class="t">Разрушение</div>
-          <div class="pl">Meta · «оценка рисков»</div>
+          <div class="pl">Meta* · «оценка рисков»</div>
         </div>
         <div class="tlc meta">
           <div class="d">май 2021</div>
           <div class="t">Узаконивание</div>
-          <div class="pl">Meta · надзорный совет</div>
+          <div class="pl">Meta* · надзорный совет</div>
         </div>
         <div class="tlc x">
           <div class="d">ноябрь 2022</div>
@@ -1617,7 +1633,7 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
       <div class="hyp reveal">
         <div class="code">H1 · следствие</div>
         <h4>Институциональная модель маскирует политическую волю магната за риторикой нейтральности.</h4>
-        <div class="status"><span class="tick">✓</span> подтверждена · случай Meta</div>
+        <div class="status"><span class="tick">✓</span> подтверждена · случай Meta*</div>
       </div>
       <div class="hyp reveal">
         <div class="code">H2 · следствие</div>
@@ -1647,12 +1663,12 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
   <div class="wrap">
     <div class="sec-tag reveal">Где сходятся обе модели</div>
     <h2 class="reveal">Структурный инвариант: шесть совпадений</h2>
-    <p class="lead reveal">Семь измерений матрицы показывают, чем X и Meta различаются. Но по шести признакам обе модели совпадают — независимо от риторики собственника и устройства корпорации. Эти совпадения и образуют единое ядро цифровой медиавласти.</p>
+    <p class="lead reveal">Семь измерений матрицы показывают, чем X и Meta* различаются. Но по шести признакам обе модели совпадают — независимо от риторики собственника и устройства корпорации. Эти совпадения и образуют единое ядро цифровой медиавласти.</p>
     <div class="conv reveal">
       <div class="conv-head">
         <span class="l"><i style="background:#333333"></i>персоналистская · X</span>
         <span class="arrow">сходятся в &rarr;</span>
-        <span class="l"><i style="background:#004F9F"></i>институциональная · Meta</span>
+        <span class="l"><i style="background:#004F9F"></i>институциональная · Meta*</span>
       </div>
       <div class="conv-grid">
         <div class="conv-cell">
@@ -1706,7 +1722,7 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
 
       <div class="dsa-cols">
         <div class="dsa-col meta reveal">
-          <div class="head">Против институциональной модели · Meta</div>
+          <div class="head">Против институциональной модели · Meta*</div>
           <div class="verdict">Типологически адекватен</div>
           <ul>
             <li>Инструментарий DSA направлен против непрозрачности — ключевой черты именно этой модели.</li>
@@ -1753,7 +1769,36 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
     </div>
   </div>
 </section>
+<!-- ===== КОРПУС ДАННЫХ ===== -->
+<section id="corpus">
+  <div class="wrap">
+    <div class="sec-tag reveal">Эмпирическая база</div>
+    <h2 class="reveal">Из чего собран корпус данных</h2>
+    <p class="lead reveal">Выводы не висят в воздухе. Под ними — самостоятельно собранный массив источников за восемь лет наблюдения (2016—2024), сложенный из трёх типов материала. Плюс одно правило, которое держит всю конструкцию: на слово не верят ни одной отдельной цифре — вывод остаётся в силе только там, где несколько независимых проверок говорят одно и то же.</p>
 
+    <div class="theory">
+      <div class="th reveal">
+        <div class="name">Записи в соцсетях</div>
+        <div class="role">голос фигурантов · 2016—2024</div>
+        <p>То, что владельцы площадок и политик сказали сами, без посредников: посты Маска про «глас народа» и беспристрастность X, его поддержка Трампа после Батлера; предвыборные записи самого Трампа, где видно взаимное усиление охватов; и два поста Цукерберга — «безумная идея» 2016-го и обоснование блокировки в январе 2021-го.</p>
+      </div>
+      <div class="th reveal">
+        <div class="name">Официальные документы</div>
+        <div class="role">институции и право</div>
+        <p>Здесь власть площадки оформлена на бумаге: решение Надзорного совета Meta* по делу Трампа, показания Цукерберга в Сенате США, текст европейского Закона о цифровых услугах (DSA), доклады Pew Research и Oxford Internet Institute. По ним видно, какими словами корпорация описывает собственные решения.</p>
+      </div>
+      <div class="th reveal">
+        <div class="name">Новостные расследования</div>
+        <div class="role">пресса · 2016—2022</div>
+        <p>То, что вытащили наружу журналисты: Guardian про Cambridge Analytica, WIRED, New Yorker и The Atlantic про «Project Alamo» и рекламную машину Facebook, Reuters и Washington Post про деплатформинг, разбор Harvard Law Review. Контекст и факты, которых нет ни в постах, ни в официальных бумагах.</p>
+      </div>
+    </div>
+
+    <div class="swnote reveal">
+      Но одни тексты ничего не доказывают. Поэтому поверх них лежит второй слой — независимые академические аудиты алгоритмов: рандомизированные эксперименты, проверки фейковыми аккаунтами, анализ структурных разрывов в метриках охвата, полевые опыты с переключением ленты. Их результаты засчитываются только тогда, когда <b>несколько разных методов сходятся в одном</b>. И последняя деталь, которая делает сравнение честным: в обоих случаях объект один и тот же — <b>Дональд Трамп</b>. Раз политик не меняется, любую разницу между площадками можно отнести на счёт самой площадки, а не его характера.
+    </div>
+  </div>
+</section>
 <!-- ===== ВЫВОД ===== -->
 <section id="conclusion">
   <div class="wrap">
@@ -1783,6 +1828,9 @@ footer .rule{width:80px;height:6px;background:var(--gold);margin:30px auto}
       Кафедра регионалистики и евразийских исследований
     </div>
     <a class="totop" href="#top">Наверх ↑</a>
+    <div style="max-width:64ch;margin:34px auto 0;border:2px solid rgba(255,255,255,.45);padding:16px 18px;font-size:clamp(10px,1.4vw,11.5px);line-height:1.7;letter-spacing:.04em;color:#fff;text-align:left">
+  <span style="color:var(--gold);font-weight:700">*</span>&nbsp;Деятельность компании Meta Platforms Inc. (включая социальные сети Facebook и Instagram) признана экстремистской и запрещена на территории Российской Федерации.
+</div>
   </div>
 </footer>
 
